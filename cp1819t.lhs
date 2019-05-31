@@ -1127,14 +1127,16 @@ outras funções auxiliares que sejam necessárias.
 \begin{code}
 
 inExpr :: Either Int (Op,(Expr,Expr)) -> Expr
-inExpr = undefined
+inExpr = either Num bop'
+    where bop'(o,(e1, e2)) = Bop e1 o e2
 
 outExpr :: Expr -> Either Int (Op,(Expr,Expr))
-outExpr = undefined
+outExpr (Num a) = Left(a)
+outExpr (Bop e1 o e2) = Right (o, (e1, e2))
 
-recExpr f = undefined
+recExpr f = id -|- (id >< (f >< f))
 
-cataExpr g = undefined
+cataExpr g = g . (recExpr (cataExpr g)) . outExpr
 
 calcula :: Expr -> Int
 calcula = undefined
