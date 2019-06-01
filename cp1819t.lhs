@@ -1138,6 +1138,7 @@ recExpr f = id -|- (id >< (f >< f))
 
 cataExpr g = g . (recExpr (cataExpr g)) . outExpr
 
+---não sei se ana e hilo são para demonstrar ------
 anaExpr g = inExpr . recExpr (anaExpr g) . g
 
 hyloExpr h g = cataExpr h . anaExpr g
@@ -1180,16 +1181,18 @@ right = Right (Op "3",(Num 10,Num 1))
 
 \begin{code}
 inL2D :: Either a (b, (X a b,X a b)) -> X a b
-inL2D = undefined
+inL2D = either Unid uncurryComp
+    where uncurryComp (b, (x1, x2)) = Comp b x1 x2
 
 outL2D :: X a b -> Either a (b, (X a b,X a b))
-outL2D = undefined
+outL2D (Unid a) = Left (a)
+outL2D (Comp b x1 x2) = Right (b, (x1, x2))
 
-recL2D f = undefined
+recL2D f = id -|- (id >< (f >< f))
 
-cataL2D g = undefined
+cataL2D g = g . (recL2D (cataL2D g)) . outL2D
 
-anaL2D g = undefined
+anaL2D g = inL2D . (recL2D (anaL2D g)) . g
 
 collectLeafs = undefined
 
