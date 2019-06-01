@@ -1138,13 +1138,42 @@ recExpr f = id -|- (id >< (f >< f))
 
 cataExpr g = g . (recExpr (cataExpr g)) . outExpr
 
+anaExpr g = inExpr . recExpr (anaExpr g) . g
+
+hyloExpr h g = cataExpr h . anaExpr g
+
 calcula :: Expr -> Int
-calcula = undefined
+calcula (Num a) = a
+calcula (Bop exp1 (Op "+") exp2) = calcula exp1 + calcula exp2
+calcula (Bop exp1 (Op "-") exp2) = calcula exp1 - calcula exp2
+calcula (Bop exp1 (Op "*") exp2) = calcula exp1 * calcula exp2
+calcula (Bop exp1 (Op "/") exp2) = calcula exp1 `div` calcula exp2
+calcula _ = 0
 
 show' = undefined
 
 compile :: String -> Codigo
 compile = undefined
+
+num1 :: Expr
+num1 = Num 1
+num2 :: Expr
+num2 = Num 2
+num10 :: Expr
+num10 = Num 10
+opMais :: Op
+opMais = Op "+"
+opDiv :: Op
+opDiv = Op "/"
+op :: Expr
+op = (Bop num1 (Op "-") num2)
+
+left :: Either Int (Op,(Expr,Expr))
+left = Left 2
+
+right :: Either Int (Op,(Expr,Expr))
+right = Right (Op "3",(Num 10,Num 1))
+
 \end{code}
 
 \subsection*{Problema 2}
