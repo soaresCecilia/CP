@@ -1151,10 +1151,22 @@ calcula (Bop exp1 (Op "*") exp2) = calcula exp1 * calcula exp2
 calcula (Bop exp1 (Op "/") exp2) = calcula exp1 `div` calcula exp2
 calcula _ = 0
 
-show' = undefined
+-- Demasiado tempo em (quickCheck prop_inv)
+show' :: Expr -> String
+show' (Num a) | a < 0 =  "(" ++ show a ++ ")"
+              | otherwise = show a
+show' (Bop exp1 (Op "+") exp2) = "(" ++ show' exp1 ++ "+" ++ show' exp2 ++ ")"
+show' (Bop exp1 (Op "-") (Num x)) | x < 0 = "(" ++ show' exp1 ++ "+" ++ show (-x) ++ ")"
+                                  | otherwise = "(" ++ show' exp1 ++ "-" ++ show x ++ ")"
+show' (Bop exp1 (Op "-") exp2) = "(" ++ show' exp1 ++ "-" ++ show' exp2 ++ ")"
+show' (Bop exp1 (Op "*") exp2) = "(" ++ show' exp1 ++ "*" ++ show' exp2 ++ ")"
+show' (Bop exp1 (Op "/") exp2) = "(" ++ show' exp1 ++ "/" ++ show' exp2 ++ ")"
+show' _ = "6969"
 
+-- Nao acabada
 compile :: String -> Codigo
-compile = undefined
+compile [] = []
+compile (h:t) = [ [h] ] ++ compile t
 
 num1 :: Expr
 num1 = Num 1
@@ -1168,7 +1180,8 @@ opDiv :: Op
 opDiv = Op "/"
 op :: Expr
 op = (Bop num1 (Op "-") num2)
-
+opComplex :: Expr
+opComplex = (Bop (Bop num1 (Op "*") num10) (Op "-") (Num (-1)))
 left :: Either Int (Op,(Expr,Expr))
 left = Left 2
 
