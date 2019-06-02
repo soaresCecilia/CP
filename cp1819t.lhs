@@ -1161,7 +1161,7 @@ show' (Bop exp1 (Op "-") (Num x)) | x < 0 = "(" ++ show' exp1 ++ "+" ++ show (-x
 show' (Bop exp1 (Op "-") exp2) = "(" ++ show' exp1 ++ "-" ++ show' exp2 ++ ")"
 show' (Bop exp1 (Op "*") exp2) = "(" ++ show' exp1 ++ "*" ++ show' exp2 ++ ")"
 show' (Bop exp1 (Op "/") exp2) = "(" ++ show' exp1 ++ "/" ++ show' exp2 ++ ")"
-show' _ = "6969"
+show' _ = "1"
 
 calculation :: String -> String
 calculation "+" = "ADD"
