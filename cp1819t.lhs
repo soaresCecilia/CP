@@ -1163,10 +1163,22 @@ show' (Bop exp1 (Op "*") exp2) = "(" ++ show' exp1 ++ "*" ++ show' exp2 ++ ")"
 show' (Bop exp1 (Op "/") exp2) = "(" ++ show' exp1 ++ "/" ++ show' exp2 ++ ")"
 show' _ = "6969"
 
--- Nao acabada
+calculation :: String -> String
+calculation "+" = "ADD"
+calculation "*" = "MULT"
+calculation "-" = "MINUS"
+calculation "/" = "DIV"
+calculation   _   = "UNDEFINED"
+
 compile :: String -> Codigo
 compile [] = []
-compile (h:t) = [ [h] ] ++ compile t
+compile bolt = aux2 (fst((readExp bolt)!!0))
+                      where
+                      aux2 (Num a) = ["PUSH " ++ show a]
+                      aux2 (Bop (Num a) (Op calc) (Num b)) = ["PUSH " ++ show a] ++ ["PUSH " ++ show b] ++ [calculation calc]
+                      aux2 (Bop exp1 (Op calc) (Num a)) =  aux2 exp1 ++ ["PUSH " ++ show a] ++ [calculation calc]
+                      aux2 (Bop (Num a) (Op calc) exp2) = ["PUSH " ++ show a] ++ aux2 exp2 ++ [calculation calc]
+                      aux2 (Bop exp1 (Op calc) exp2) = aux2 exp1 ++ aux2 exp2 ++ [calculation calc]
 
 num1 :: Expr
 num1 = Num 1
