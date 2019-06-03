@@ -1343,10 +1343,10 @@ Solução:
 \begin{code}
 
 cos' x = prj . for loop init where
-  loop (e, h, s, t) = (e + h, h * (-x^2)/s, s + t, t + 8)
-  init = (1, -1/2 * (x^2), 12, 18)
-  prj(e, h, s, t) = e
-  
+   loop (e, h, s, t) = (e + h, h * (-x^2)/s, s + t, t + 8)
+   init = (1, -1/2 * (x^2), 12, 18)
+   prj(e, h, s, t) = e
+
 \end{code}
 
 \subsection*{Problema 4}
