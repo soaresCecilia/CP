@@ -1224,6 +1224,7 @@ collectLeafs :: X a b -> [a]
 collectLeafs (Unid a) = [a]
 collectLeafs (Comp b x1 x2) = collectLeafs x1 ++ collectLeafs x2
 
+myex1, myex2, myex3, myex4 :: L2D
 myex1 = Unid ((100,300),("F",col_green))
 
 myex2 = Comp Ve b1 b2
@@ -1267,9 +1268,8 @@ calcAux V (l1, a1) (l2,a2) = (l1 + (l2 `div` 2), a1 + a2)
 
 dimen :: X Caixa Tipo -> (Int, Int)
 dimen (Unid ((largura, altura), _)) = (largura,altura)
-dimen (Comp tipo (Unid ((largesq, altesq), _))  (Unid ((largdir, altdir), _))) =  calcAux tipo (largesq, altesq) (largdir, altdir)
+--dimen (Comp tipo (Unid ((largesq, altesq), _))  (Unid ((largdir, altdir), _))) =  calcAux tipo (largesq, altesq) (largdir, altdir)
 dimen (Comp tipo esq dir) = calcAux tipo (dimen esq) (dimen dir)
-
 
 {-  (0, 0)
 dimen (Comp tipo (Unid ((tex, tey), _)) (Unid _)) =
@@ -1288,15 +1288,15 @@ dimen (Comp tipo esquerda direita) =
            (tex, tey) = fst (last (collectLeafs esquerda))
            (tdx, tdy) = fst (last (collectLeafs direita)) -}
 
-
-{- calcOrigins :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
+{-
+calcOrigins :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
 calcOrigins (Unid caixa, origem) = Unid (caixa, origem)
 calcOrigins ((Comp tipo esq dir), origem) =
                       let esq' = calcOrigins (esq, origem)
                           dir' = calcOrigins (dir, origem)
                       in
--}
 
+-}
 --O princípio base é que a origem de um rectangulo corresponde ao seu canto inferior
 -- esquerdo: a partir disto, dados dois rectangulos (a,b)
 -- Quanto à função calc: considere duas caixas a) e b). Sabendo a posição absoluta
@@ -1336,10 +1336,12 @@ caixasAndOrigin2Pict = undefined
 \subsection*{Problema 3}
 Solução:
 \begin{code}
+
 cos' x = prj . for loop init where
-   loop = undefined
-   init = undefined
-   prj = undefined
+   loop (e, h, s, t) = (e + h, h * (-x^2)/s, s + t, t + 8)
+   init = (1, -1/2 * (x^2), 12, 18)
+   prj(e, h, s, t) = e
+
 \end{code}
 
 \subsection*{Problema 4}
