@@ -384,7 +384,7 @@ O que a linguagem |L2D| faz é agregar tais caixas tipográficas
 umas com as outras segundo padrões especificados por vários
 \aspas{tipos}, a saber,
 \begin{code}
-data Tipo = V | Vd | Ve | H | Ht | Hb
+data Tipo = V | Vd | Ve | H | Ht | Hb deriving Show
 \end{code}
 com o seguinte significado:
 \begin{itemize}
@@ -1194,18 +1194,118 @@ cataL2D g = g . (recL2D (cataL2D g)) . outL2D
 
 anaL2D g = inL2D . (recL2D (anaL2D g)) . g
 
-collectLeafs = undefined
+-- o a será uma lista de caixas
+collectLeafs :: X a b -> [a]
+collectLeafs (Unid a) = [a]
+collectLeafs (Comp b x1 x2) = collectLeafs x1 ++ collectLeafs x2
 
-dimen :: X Caixa Tipo -> (Float, Float)
-dimen = undefined
+myex1 = Unid ((100,300),("F",col_green))
 
-calcOrigins :: ((X Caixa Tipo),Origem) -> X (Caixa,Origem) ()
-calcOrigins = undefined
+myex2 = Comp Ve b1 b2
+        where b1 = Unid ((100,300),("F",col_green))
+              b2 = Unid ((200,300),("H",col_green))
+
+myex3 = Comp Hb (Comp Ve b1 b2) (Comp Ve b3 b4)
+        where b1 = Unid ((100,300),("F",col_green))
+              b2 = Unid ((200,300),("H",col_green))
+              b3 = Unid ((300,300),("H",col_green))
+              b4 = Unid ((400,300),("H",col_green))
+
+myex4 = Comp Hb (Comp Ve b1 b2) (b3)
+        where b1 = Unid ((100,300),("F",col_green))
+              b2 = Unid ((200,300),("H",col_green))
+              b3 = Unid ((300,300),("H",col_green))
+
+ex3 = Comp Hb (Comp Ve bot top) (Comp Ve gbox2 ybox2)
+      where bbox1 = Unid ((100,200),("A",col_blue))
+            bbox2 = Unid ((150,200),("E",col_blue))
+            gbox1 = Unid ((50,50),("B",col_green))
+            gbox2 = Unid ((100,300),("F",col_green))
+            rbox1 = Unid ((300,50),("C",col_green))
+            rbox2 = Unid ((200,100),("G",col_green))
+            wbox1 = Unid ((450,200),("",col_green))
+            ybox1 = Unid ((100,200),("D",col_green))
+            ybox2 = Unid ((100,300),("H",col_green))
+            bot = Comp Hb wbox1 bbox2
+            top = (Comp Ve (Comp Hb bbox1 gbox1) (Comp Hb rbox1 (Comp H ybox1 rbox2)))
+
+-- é o ponto final do LD2, i e, o ponto onde começa a ultima caixa
+--
+
+calcAux :: Tipo -> (Int, Int) -> (Int, Int) -> (Int, Int)
+calcAux Hb (l1, a1) (l2,a2) = (l1 + l2, a1)
+calcAux Ht (l1, a1) (l2,a2) = (l1 + l2, a1 + a2)
+calcAux H (l1, a1) (l2,a2) = (l1 + l2, a1 + (a2 `div` 2))
+calcAux Vd (l1, a1) (l2,a2) = (l1 + l2, a1 + a2)
+calcAux Ve (l1, a1) (l2,a2) = (l1, a1 + a2)
+calcAux V (l1, a1) (l2,a2) = (l1 + (l2 `div` 2), a1 + a2)
+
+dimen :: X Caixa Tipo -> (Int, Int)
+dimen (Unid ((largura, altura), _)) = (largura,altura)
+dimen (Comp tipo (Unid ((largesq, altesq), _))  (Unid ((largdir, altdir), _))) =  calcAux tipo (largesq, altesq) (largdir, altdir)
+dimen (Comp tipo esq dir) = calcAux tipo (dimen esq) (dimen dir)
+
+
+{-  (0, 0)
+dimen (Comp tipo (Unid ((tex, tey), _)) (Unid _)) =
+     calc tipo (0, 0) (
+dimen (Comp tipo esquerda (Unid _)) =
+     calc tipo (ex, ey) (fromIntegral(tex), fromIntegral(tey))
+     where (ex, ey) = dimen esquerda
+           (tex, tey) = fst (last (collectLeafs esquerda))
+dimen (Comp tipo (Unid ((tex, tey), _)) direita) =
+     calc tipo (dx, dy) (fromIntegral(tex), fromIntegral(tey))
+     where (dx, dy) = dimen direita
+dimen (Comp tipo esquerda direita) =
+     calc tipo (dx, dy) (fromIntegral(tex), fromIntegral(tey))
+     where (ex, ey) = dimen esquerda
+           (dx, dy) = dimen direita
+           (tex, tey) = fst (last (collectLeafs esquerda))
+           (tdx, tdy) = fst (last (collectLeafs direita)) -}
+
+
+{- calcOrigins :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
+calcOrigins (Unid caixa, origem) = Unid (caixa, origem)
+calcOrigins ((Comp tipo esq dir), origem) =
+                      let esq' = calcOrigins (esq, origem)
+                          dir' = calcOrigins (dir, origem)
+                      in
+-}
+
+--O princípio base é que a origem de um rectangulo corresponde ao seu canto inferior
+-- esquerdo: a partir disto, dados dois rectangulos (a,b)
+-- Quanto à função calc: considere duas caixas a) e b). Sabendo a posição absoluta
+--da caixa a), as suas dimensões, e a posição relativa da caixa b) em relação
+--à caixa a), a função, calc :: Tipo -> Origem -> (Float, Float) -> Origem,
+--determina onde colocar a caixa b), i.e. a sua posição absoluta.
+
+--(Float, Float) deveria ser (Int, Int)
 
 calc :: Tipo -> Origem -> (Float, Float) -> Origem
-calc = undefined
+calc Hb (x,y) (largura, altura) = (x + largura, y)
+calc Ht (x,y) (largura, altura) = (x + largura, y + altura)
+calc H (x,y) (largura, altura) = (x + largura, y + (altura / 2))
+calc Vd (x,y) (largura, altura) = (x + largura, y + altura)
+calc Ve (x,y) (largura, altura) = (x, y + altura)
+calc V (x,y) (largura, altura) = (x + (largura / 2), y + altura)
 
+
+--agrupa as caixas numa lista com as origens e caixas
+agrup_caixas :: X (Caixa, Origem) () -> Fig
+agrup_caixas = undefined
+
+
+
+
+--segundo problema
+
+--mostra_caixas :: (L2D,Origem) -> IO ()--
+mostra_caixas = undefined
+
+--auxiliar da função mostra_caixas
+caixasAndOrigin2Pict :: (X Caixa Tipo, Origem) -> G.Picture
 caixasAndOrigin2Pict = undefined
+
 \end{code}
 
 \subsection*{Problema 3}
