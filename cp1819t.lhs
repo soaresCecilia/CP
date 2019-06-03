@@ -1302,7 +1302,6 @@ calcOrigins ((Comp tipo esq dir), origem) =
                           dir' = calcOrigins (dir, origem)
                       in (Comp () esq' dir')
 
--}
 --O princípio base é que a origem de um rectangulo corresponde ao seu canto inferior
 -- esquerdo: a partir disto, dados dois rectangulos (a,b)
 -- Quanto à função calc: considere duas caixas a) e b). Sabendo a posição absoluta
@@ -1344,30 +1343,10 @@ Solução:
 \begin{code}
 
 cos' x = prj . for loop init where
-<<<<<<< HEAD
-   loop = undefined
-   init = undefined
-   prj = undefined
-{--
-s 0 = 2
-s n = 2 + s (n-1)
-
-h x 0 = x
-h x n = ((x**2) / (s n) )* h x n
-
-e x 0 =  1
-e x n = h x n + e x n--}
-
-cos12 x = prj . for loop init where
-  init = (1,-x**2,2)
-  loop (e,h,s) = (h + e, (-x**2) / s * h, 2 + s)
-  prj (e,h,s) = e
-=======
    loop (e, h, s, t) = (e + h, h * (-x^2)/s, s + t, t + 8)
    init = (1, -1/2 * (x^2), 12, 18)
    prj(e, h, s, t) = e
-
->>>>>>> c665aea607c4e2482d9841ed45f7590ddc60360c
+   
 \end{code}
 
 \subsection*{Problema 4}
