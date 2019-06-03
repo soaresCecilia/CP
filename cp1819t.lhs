@@ -1151,10 +1151,34 @@ calcula (Bop exp1 (Op "*") exp2) = calcula exp1 * calcula exp2
 calcula (Bop exp1 (Op "/") exp2) = calcula exp1 `div` calcula exp2
 calcula _ = 0
 
-show' = undefined
+-- Demasiado tempo em (quickCheck prop_inv)
+show' :: Expr -> String
+show' (Num a) | a < 0 =  "(" ++ show a ++ ")"
+              | otherwise = show a
+show' (Bop exp1 (Op "+") exp2) = "(" ++ show' exp1 ++ "+" ++ show' exp2 ++ ")"
+show' (Bop exp1 (Op "-") (Num x)) | x < 0 = "(" ++ show' exp1 ++ "+" ++ show (-x) ++ ")"
+                                  | otherwise = "(" ++ show' exp1 ++ "-" ++ show x ++ ")"
+show' (Bop exp1 (Op "-") exp2) = "(" ++ show' exp1 ++ "-" ++ show' exp2 ++ ")"
+show' (Bop exp1 (Op "*") exp2) = "(" ++ show' exp1 ++ "*" ++ show' exp2 ++ ")"
+show' (Bop exp1 (Op "/") exp2) = "(" ++ show' exp1 ++ "/" ++ show' exp2 ++ ")"
+show' _ = "1"
+
+calculation :: String -> String
+calculation "+" = "ADD"
+calculation "*" = "MULT"
+calculation "-" = "MINUS"
+calculation "/" = "DIV"
+calculation   _   = "UNDEFINED"
 
 compile :: String -> Codigo
-compile = undefined
+compile [] = []
+compile bolt = aux2 (fst((readExp bolt)!!0))
+                      where
+                      aux2 (Num a) = ["PUSH " ++ show a]
+                      aux2 (Bop (Num a) (Op calc) (Num b)) = ["PUSH " ++ show a] ++ ["PUSH " ++ show b] ++ [calculation calc]
+                      aux2 (Bop exp1 (Op calc) (Num a)) =  aux2 exp1 ++ ["PUSH " ++ show a] ++ [calculation calc]
+                      aux2 (Bop (Num a) (Op calc) exp2) = ["PUSH " ++ show a] ++ aux2 exp2 ++ [calculation calc]
+                      aux2 (Bop exp1 (Op calc) exp2) = aux2 exp1 ++ aux2 exp2 ++ [calculation calc]
 
 num1 :: Expr
 num1 = Num 1
@@ -1168,7 +1192,8 @@ opDiv :: Op
 opDiv = Op "/"
 op :: Expr
 op = (Bop num1 (Op "-") num2)
-
+opComplex :: Expr
+opComplex = (Bop (Bop num1 (Op "*") num10) (Op "-") (Num (-1)))
 left :: Either Int (Op,(Expr,Expr))
 left = Left 2
 
