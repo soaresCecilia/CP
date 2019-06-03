@@ -1224,6 +1224,8 @@ collectLeafs :: X a b -> [a]
 collectLeafs (Unid a) = [a]
 collectLeafs (Comp b x1 x2) = collectLeafs x1 ++ collectLeafs x2
 
+myex1,myex2,myex3,myex4 :: L2D
+
 myex1 = Unid ((100,300),("F",col_green))
 
 myex2 = Comp Ve b1 b2
@@ -1233,14 +1235,14 @@ myex2 = Comp Ve b1 b2
 myex3 = Comp Hb (Comp Ve b1 b2) (Comp Ve b3 b4)
         where b1 = Unid ((100,300),("F",col_green))
               b2 = Unid ((200,300),("H",col_green))
-              b3 = Unid ((300,300),("H",col_green))
-              b4 = Unid ((400,300),("H",col_green))
+              b3 = Unid ((300,300),("E",col_green))
+              b4 = Unid ((400,300),("G",col_green))
 
 myex4 = Comp Hb (Comp Ve b1 b2) (b3)
         where b1 = Unid ((100,300),("F",col_green))
               b2 = Unid ((200,300),("H",col_green))
-              b3 = Unid ((300,300),("H",col_green))
-
+              b3 = Unid ((300,300),("G",col_green))
+ex3 :: L2D
 ex3 = Comp Hb (Comp Ve bot top) (Comp Ve gbox2 ybox2)
       where bbox1 = Unid ((100,200),("A",col_blue))
             bbox2 = Unid ((150,200),("E",col_blue))
@@ -1257,17 +1259,20 @@ ex3 = Comp Hb (Comp Ve bot top) (Comp Ve gbox2 ybox2)
 -- é o ponto final do LD2, i e, o ponto onde começa a ultima caixa
 --
 
+v :: Int -> Int -> Int
+v l1 l2 | l1 >= l2 = l1
+        | otherwise = l1 + (l2 `div` 2)
+
 calcAux :: Tipo -> (Int, Int) -> (Int, Int) -> (Int, Int)
-calcAux Hb (l1, a1) (l2,a2) = (l1 + l2, a1)
+calcAux V (l1, a1) (l2,a2) = (v l1 l2 , a1 + a2)
+calcAux Vd (l1, a1) (l2,a2) = (max l1 l2, a1 + a2)
+calcAux Ve (l1, a1) (l2,a2) = (max l1 l2, a1 + a2)
+calcAux Hb (l1, a1) (l2,a2) = (l1 + l2, max a1 a2)
 calcAux Ht (l1, a1) (l2,a2) = (l1 + l2, a1 + a2)
-calcAux H (l1, a1) (l2,a2) = (l1 + l2, a1 + (a2 `div` 2))
-calcAux Vd (l1, a1) (l2,a2) = (l1 + l2, a1 + a2)
-calcAux Ve (l1, a1) (l2,a2) = (l1, a1 + a2)
-calcAux V (l1, a1) (l2,a2) = (l1 + (l2 `div` 2), a1 + a2)
+calcAux H (l1, a1) (l2,a2) = (l1 + l2, v a1 a2)
 
 dimen :: X Caixa Tipo -> (Int, Int)
 dimen (Unid ((largura, altura), _)) = (largura,altura)
-dimen (Comp tipo (Unid ((largesq, altesq), _))  (Unid ((largdir, altdir), _))) =  calcAux tipo (largesq, altesq) (largdir, altdir)
 dimen (Comp tipo esq dir) = calcAux tipo (dimen esq) (dimen dir)
 
 
@@ -1288,14 +1293,15 @@ dimen (Comp tipo esquerda direita) =
            (tex, tey) = fst (last (collectLeafs esquerda))
            (tdx, tdy) = fst (last (collectLeafs direita)) -}
 
+cai_ex2 :: ((X Caixa Tipo), Origem)
+cai_ex2 = (myex2,(0,0))
 
-{- calcOrigins :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
+calcOrigins :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
 calcOrigins (Unid caixa, origem) = Unid (caixa, origem)
 calcOrigins ((Comp tipo esq dir), origem) =
                       let esq' = calcOrigins (esq, origem)
                           dir' = calcOrigins (dir, origem)
-                      in
--}
+                      in (Comp () esq' dir')
 
 --O princípio base é que a origem de um rectangulo corresponde ao seu canto inferior
 -- esquerdo: a partir disto, dados dois rectangulos (a,b)
@@ -1336,10 +1342,25 @@ caixasAndOrigin2Pict = undefined
 \subsection*{Problema 3}
 Solução:
 \begin{code}
+
 cos' x = prj . for loop init where
    loop = undefined
    init = undefined
    prj = undefined
+{--
+s 0 = 2
+s n = 2 + s (n-1)
+
+h x 0 = x
+h x n = ((x**2) / (s n) )* h x n
+
+e x 0 =  1
+e x n = h x n + e x n--}
+
+cos12 x = prj . for loop init where
+  init = (1,-x**2,2)
+  loop (e,h,s) = (h + e, (-x**2) / s * h, 2 + s)
+  prj (e,h,s) = e
 \end{code}
 
 \subsection*{Problema 4}
