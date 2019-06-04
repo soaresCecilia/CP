@@ -1295,6 +1295,29 @@ dimen (Comp tipo esquerda direita) =
 cai_ex2 :: ((X Caixa Tipo), Origem)
 cai_ex2 = (myex2,(0,0))
 
+pprint :: X (Caixa, Origem) () -> String
+pprint (Unid (((_,(x,_))), origem)) = "// Caixa: " ++ x ++ " " ++ show origem ++ " | - | "
+pprint (Comp tipo esq dir) = pprint esq ++ pprint dir
+{--
+calcOrigins' :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
+calcOrigins' (Unid caixa, origem) = Unid (caixa, origem)
+calcOrigins' ((Comp tipo esq dir), origem) = (Comp () esq' dir')
+                      where
+                          esq' = calcOrigins' (esq, (fromIntegral a1, fromIntegral b1 ) )
+                          dir' = calcOrigins' (dir, (fromIntegral a2, fromIntegral b2 ) )
+                          (a1,b1) = dimen esq
+                          (a2,b2) = dimen dir--}
+calcOrigins' :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
+calcOrigins' (Unid caixa, origem) = Unid (caixa, origem)
+calcOrigins' ((Comp tipo esq (Unid ((largura, altura), x))), origem) = (Comp () esq' dir')
+                      where
+                          esq' = calcOrigins' (esq, origem)
+                          dir' = calcOrigins' ((Unid ((largura, altura), x)), calc tipo origem (fromIntegral largura, fromIntegral altura))
+calcOrigins' ((Comp tipo esq dir), origem) = (Comp () esq' dir')
+                      where
+                          esq' = calcOrigins' (esq, origem)
+                          dir' = calcOrigins' (dir, calc tipo origem (0,0))
+
 calcOrigins :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
 calcOrigins (Unid caixa, origem) = Unid (caixa, origem)
 calcOrigins ((Comp tipo esq dir), origem) =
