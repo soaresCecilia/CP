@@ -1346,16 +1346,24 @@ cos' x = prj . for loop init where
    loop (e, h, s, t) = (e + h, h * (-x^2)/s, s + t, t + 8)
    init = (1, -1/2 * (x^2), 12, 18)
    prj(e, h, s, t) = e
-   
+
 \end{code}
 
 \subsection*{Problema 4}
 Triologia ``ana-cata-hilo":
 \begin{code}
-outFS (FS l) = undefined
-outNode = undefined
 
-baseFS f g h = undefined
+
+outFS (FS l) = map x l
+      where
+        x (a, File b) = (a, Left b)
+        x (a, Dir b) = (a, Right b)
+-- x (a, b) = (a, outNode b)
+
+outNode (File conteudo) = Left conteudo
+outNode(Dir b) = Right b
+
+baseFS f g h = map (f >< (g -|- h))
 
 cataFS :: ([(a, Either b c)] -> c) -> FS a b -> c
 cataFS g = undefined
