@@ -1138,7 +1138,6 @@ recExpr f = id -|- (id >< (f >< f))
 
 cataExpr g = g . (recExpr (cataExpr g)) . outExpr
 
----não sei se ana e hilo são para demonstrar ------
 anaExpr g = inExpr . recExpr (anaExpr g) . g
 
 hyloExpr h g = cataExpr h . anaExpr g
@@ -1389,12 +1388,13 @@ outNode(Dir b) = Right b
 baseFS f g h = map (f >< (g -|- h))
 
 cataFS :: ([(a, Either b c)] -> c) -> FS a b -> c
-cataFS g = undefined
+cataFS g = g . (baseFS id id (cataFS g)) . outFS
 
 anaFS :: (c -> [(a, Either b c)]) -> c -> FS a b
-anaFS g = undefined
+anaFS g = inFS . (baseFS id id (anaFS g)) . g
 
-hyloFS g h = undefined
+hyloFS g h = (cataFS g) . (anaFS h)
+
 \end{code}
 Outras funções pedidas:
 \begin{code}
