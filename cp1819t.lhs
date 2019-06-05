@@ -974,7 +974,7 @@ crCaixa (x,y) w h l c = G.Translate (x+(w/2)) (y+(h/2)) $  G.pictures [caixa, et
 \end{code}
 Função para visualizar resultados gráficos:
 \begin{code}
-display = G.display (G.InWindow "Problema 4" (400, 400) (40, 40)) G.white
+display = G.display (G.InWindow "Problema 4" (800, 800) (40, 40)) G.white
 \end{code}
 
 \subsection*{Problema 4}
@@ -1382,7 +1382,6 @@ cataL2D g = g . (recL2D (cataL2D g)) . outL2D
 
 anaL2D g = inL2D . (recL2D (anaL2D g)) . g
 
-<<<<<<< HEAD
 -- o a será uma lista de caixas
 collectLeafs :: X a b -> [a]
 collectLeafs (Unid a) = [a]
@@ -1445,33 +1444,17 @@ cai_ex2 = (myex2,(0,0))
 pprint :: X (Caixa, Origem) () -> String
 pprint (Unid (((_,(x,_))), origem)) = "// Caixa: " ++ x ++ " " ++ show origem ++ " | - | "
 pprint (Comp tipo esq dir) = pprint esq ++ pprint dir
-{-
-calcOrigins' :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
-calcOrigins' (Unid caixa, origem) = Unid (caixa, origem)
-calcOrigins' ((Comp tipo esq dir), origem) = (Comp () esq' dir')
-                      where
-                          esq' = calcOrigins' (esq, (fromIntegral a1, fromIntegral b1 ) )
-                          dir' = calcOrigins' (dir, (fromIntegral a2, fromIntegral b2 ) )
-                          (a1,b1) = dimen esq
-                          (a2,b2) = dimen dir
--}
-calcOrigins' :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
-calcOrigins' (Unid caixa, origem) = Unid (caixa, origem)
-calcOrigins' ((Comp tipo esq (Unid ((largura, altura), x))), origem) = (Comp () esq' dir')
-                      where
-                          esq' = calcOrigins' (esq, origem)
-                          dir' = calcOrigins' ((Unid ((largura, altura), x)), calc tipo origem (fromIntegral largura, fromIntegral altura))
-calcOrigins' ((Comp tipo esq dir), origem) = (Comp () esq' dir')
-                      where
-                          esq' = calcOrigins' (esq, origem)
-                          dir' = calcOrigins' (dir, calc tipo origem (0,0))
 
 calcOrigins :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
 calcOrigins (Unid caixa, origem) = Unid (caixa, origem)
-calcOrigins ((Comp tipo esq dir), origem) =
-                      let esq' = calcOrigins (esq, origem)
-                          dir' = calcOrigins (dir, origem)
-                      in (Comp () esq' dir')
+calcOrigins ((Comp tipo esq (Unid ((largura, altura), x))), origem) = (Comp () esq' dir')
+                      where
+                          esq' = calcOrigins (esq, origem)
+                          dir' = calcOrigins ((Unid ((largura, altura), x)), calc tipo origem (fromIntegral largura, fromIntegral altura))
+calcOrigins ((Comp tipo esq dir), origem) = (Comp () esq' dir')
+                      where
+                          esq' = calcOrigins (esq, origem)
+                          dir' = calcOrigins (dir, calc tipo origem (0,0))
 
 --O princípio base é que a origem de um rectangulo corresponde ao seu canto inferior
 -- esquerdo: a partir disto, dados dois rectangulos (a,b)
@@ -1491,10 +1474,10 @@ calc Ve (x,y) (largura, altura) = (x, y + altura)
 calc V (x,y) (largura, altura) = (x + (largura / 2), y + altura)
 
 
---agrupa as caixas numa lista com as origens e caixas
+-- agrupa as caixas numa lista com as origens e caixas
 agrup_caixas :: X (Caixa, Origem) () -> Fig
-agrup_caixas = undefined
-
+agrup_caixas (Unid (caixa, origem)) = [(origem,caixa)]
+agrup_caixas (Comp () esq dir) = agrup_caixas esq ++ agrup_caixas dir
 
 fl :: (Float,Float)
 fl = (1.0,1.0)
@@ -1503,17 +1486,26 @@ sfl :: Float
 sfl = 1.0
 
 --segundo problema
-
+-- Função display é dada pelo professor
+-- a Funcao caixasAndOrigin2Pict e após isso usa o diplay para apresentar a imagem
+-- em formato gráfico
 mostra_caixas :: (L2D,Origem) -> IO ()
-mostra_caixas (x, y) =
-       do return ()
+mostra_caixas = display . caixasAndOrigin2Pict
 
---auxiliar da função mostra_caixas
+-- auxiliar da função mostra_caixas
+-- Calcula inicialmente as orignes de cada uma das imagens usando a funcao calcOrigins
+-- De seguida agrupa todas as caixas numa lista de caixas e as suas origens "Fig"
+-- Depois chama-se a função ajudante que coloca todas as caixas e origens numa lista de pictures
+-- usando a Sugestão de utilizar a G.pictures, transforma-se depois a lista retornada pela "ajudante"[Pictures] numa Picture
 caixasAndOrigin2Pict :: (X Caixa Tipo, Origem) -> G.Picture
-caixasAndOrigin2Pict = undefined
-=======
-hyloL2D h g = cataL2D h . anaL2D g
->>>>>>> c2da39d43008876a9215c0c1f2b1794fa59709d3
+caixasAndOrigin2Pict = G.Pictures . ajudante . agrup_caixas . calcOrigins
+
+-- Funcao que recebe uma lista de caixas com origens
+-- Para cada elemento da lista (Caixa,Origem), usamos a funcao dada "crCaixa" que transforma
+-- uma caixa numa dada posição numa Picture e a junta a uma lista de Picures
+ajudante [] = []
+ajudante ((o,((w,h),(t,c))):xs)
+    = crCaixa o (fromIntegral w) (fromIntegral h) t c : ajudante xs
 
 \end{code}
 
@@ -1618,23 +1610,6 @@ anaFS g = inFS . (baseFS id id (anaFS g)) . g
 
 Outras funções pedidas:
 \begin{code}
-<<<<<<< HEAD
-tfs = FS [("f1", File "Ola"),
-          ("f2", File "Repetido"),
-          ("d1", Dir (FS [("f2", File "Ole"),
-                          ("f3", File "Ole")
-                         ]))
-         ]
-tfs2 = FS [("d9",Dir (FS [("f2", File "Ole"),
-                          ("f1", File "Ole"),
-                          ("f3", File "Ole"),
-                          ("f4", File "Ole"),
-                          ("f5", File "Ole"),
-                          ("f9", File "Ole")
-                         ]))
-          ]
-=======
->>>>>>> c2da39d43008876a9215c0c1f2b1794fa59709d3
 
 check :: (Eq a) => FS a b -> Bool
 check (FS [])                     = True
