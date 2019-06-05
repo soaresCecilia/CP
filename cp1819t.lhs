@@ -1409,8 +1409,9 @@ Com efeito, o diagrama genérico destes três sistemas de composição de funç�
 Contudo, por falta de tempo não conseguimos responder inteiramente a esta questão,
 tendo apenas conseguido gerar o seguinte programa em linguagem Haskell sem nos socorrermos
 de nenhum cata/ana ou hilomorfismo.
-
-Todavia, isso não nos impediu de demonstrar que sabemos deduzir as seguintes funções:
+Todavia, isso não nos impediu de demonstrar que sabemos deduzir as funções
+|inL2D|, |outL2D|, |recL2D|, |cataL2D|, |anaL2D| e |hyloL2D|. Estas funções
+foram alcançadas através do diagrama supra representado.
 
 \begin{code}
 inL2D :: Either a (b, (X a b,X a b)) -> X a b
@@ -1432,8 +1433,12 @@ hyloL2D h g = cataL2D h . anaL2D g
 collectLeafs :: X a b -> [a]
 collectLeafs (Unid a) = undefined
 
+\end{code}
 
 
+A função
+
+\begin{code}
 v :: Int -> Int -> Int
 v l1 l2 | l1 >= l2 = l1
         | otherwise = l1 + (l2 `div` 2)
@@ -1691,13 +1696,10 @@ tar = cataFS( concat.map((either (singl.(singl >< id)) (auxTar)).distr))
 auxTar :: (a,[([a],b)]) -> [([a],b)]
 auxTar (a, []) = []
 auxTar (a, (l,b):xs) = (a:l,b):(auxTar (a,xs))
-
 \end{code}
 
 A função novoFich pega numa lista de identificadores do ficheiro e diretorias e
 e coloca o ficheiro
-
-
 \begin{code}
 untar :: (Eq a) => [(Path a, b)] -> FS a b
 untar = joinDupDirs . cataList(either (auxUntar) novoFich)
@@ -1711,6 +1713,10 @@ auxUntar () = FS []
 \end{code}
 
 
+A auxfind1 verifica se o a, que é um nome de ficheiro ou diretoria está no par (a,b),
+caso esteja cria uma lista de lista do a,caso contrário cria uma lista de lista vazia
+
+
 \begin{code}
 find :: (Eq a) => a -> FS a b -> [Path a]
 find a = cataFS ( concat.map ( ( either (auxFind1 a) (auxFind2 a) ).distr ) )
@@ -1720,7 +1726,7 @@ auxFind1 file (a,b) | file == a = singl (singl a)
                  | otherwise = nil (nil)
 
 auxFind2 :: (Eq a) => a -> (a,[[a]]) -> [[a]]
-auxFind2 file (x,(h:t)) | (elem file h) = (x:h):auxFind2 file (x,t)
+auxFind2 file (x,(h:t)) | (elem file h) = (x:h): auxFind2 file (x,t)
                         | otherwise = auxFind2 file (x,t)
 auxFind2 file _ = []
 \end{code}
