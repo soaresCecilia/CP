@@ -1291,51 +1291,20 @@ Esta função trata-se efetivamente de um compilador, em que gera código posfix
 para uma stack. Na verdade, a stack calcula o valor da string.
 
 \begin{code}
-calculation :: String -> String
-calculation "+" = "ADD"
-calculation "*" = "MULT"
-calculation "-" = "MINUS"
-calculation "/" = "DIV"
-calculation   _   = "UNDEFINED"
+calculation :: String -> Codigo
+calculation "+" = ["ADD"]
+calculation "*" = ["MULT"]
+calculation "-" = ["MINUS"]
+calculation "/" = ["DIV"]
 
 
 compile :: String -> Codigo
-compile = cataList (either nil compila)
-  where compila (x, xs) = undefined
+compile = cataExpr (either inteiro op) . strings
+  where strings = fst . head . readExp
+        inteiro x = ["PUSH" ++ show x]
+        op (Op x,(y,z)) = y ++ z ++ (calculation x)
 
 
-
-
-{-
-compile bolt = aux2 (fst((readExp bolt)!!0))
-                      where
-                      aux2 (Num a) = ["PUSH " ++ show a]
-                      aux2 (Bop (Num a) (Op calc) (Num b)) = ["PUSH " ++ show a] ++ ["PUSH " ++ show b] ++ [calculation calc]
-                      aux2 (Bop exp1 (Op calc) (Num a)) =  aux2 exp1 ++ ["PUSH " ++ show a] ++ [calculation calc]
-                      aux2 (Bop (Num a) (Op calc) exp2) = ["PUSH " ++ show a] ++ aux2 exp2 ++ [calculation calc]
-                      aux2 (Bop exp1 (Op calc) exp2) = aux2 exp1 ++ aux2 exp2 ++ [calculation calc]
-
-num1 :: Expr
-num1 = Num 1
-num2 :: Expr
-num2 = Num 2
-num10 :: Expr
-num10 = Num 10
-opMais :: Op
-opMais = Op "+"
-opDiv :: Op
-opDiv = Op "/"
-op :: Expr
-op = (Bop num1 (Op "-") num2)
-
-opComplex :: Expr
-opComplex = (Bop (Bop num1 (Op "*") num10) (Op "-") (Num (-1)))
-left :: Either Int (Op,(Expr,Expr))
-left = Left 2
-
-right :: Either Int (Op,(Expr,Expr))
-right = Right (Op "3",(Num 10,Num 1))
--}
 \end{code}
 
 \item Função |show'|
