@@ -1530,23 +1530,38 @@ fl = (1.0,1.0)
 sfl :: Float
 sfl = 1.0
 
---segundo problema
--- Função display é dada pelo professor
--- a Funcao caixasAndOrigin2Pict e após isso usa o diplay para apresentar a imagem
--- em formato gráfico
+\end{code}
+
+Segundo problema
+
+Função display é dada pelo professor
+a Funcao caixasAndOrigin2Pict e após isso usa o diplay para apresentar a imagem
+em formato gráfico
+\begin{code}
+
 mostra_caixas :: (L2D,Origem) -> IO ()
 mostra_caixas = display . caixasAndOrigin2Pict
 
--- auxiliar da função mostra_caixas
--- Calcula inicialmente as orignes de cada uma das imagens usando a funcao calcOrigins
--- De seguida agrupa todas as caixas numa lista de caixas e as suas origens "Fig"
--- Depois chama-se a função ajudante que coloca todas as caixas e origens numa lista de pictures
--- usando a Sugestão de utilizar a G.pictures, transforma-se depois a lista retornada pela "ajudante"[Pictures] numa Picture
+\end{code}
+
+auxiliar da função mostra_caixas
+Calcula inicialmente as orignes de cada uma das imagens usando a funcao calcOrigins
+De seguida agrupa todas as caixas numa lista de caixas e as suas origens "Fig"
+Depois chama-se a função ajudante que coloca todas as caixas e origens numa lista de pictures
+usando a Sugestão de utilizar a G.pictures, transforma-se depois a lista retornada pela "ajudante"[Pictures] numa Picture
+
+\begin{code}
+
 caixasAndOrigin2Pict :: (X Caixa Tipo, Origem) -> G.Picture
 caixasAndOrigin2Pict = G.Pictures . ajudante . agrup_caixas . calcOrigins
 
--- Funcao que recebe uma lista de caixas com origens
--- Para cada elemento da lista (Caixa,Origem), usamos a funcao dada "crC"
+\end{code}
+
+Funcao que recebe uma lista de caixas com origens
+Para cada elemento da lista (Caixa,Origem), usamos a funcao dada "crCaixa"
+
+\begin{code}
+
 ajudante [] = []
 ajudante ((o,((w,h),(t,c))):xs)
     = crCaixa o (fromIntegral w) (fromIntegral h) t c : ajudante xs
@@ -1754,8 +1769,12 @@ auxTar (a, (l,b):xs) = (a:l,b):(auxTar (a,xs))
 \end{code}
 
 A função novoFich pega numa lista de identificadores do ficheiro e diretorias e
-e coloca o ficheiro
+e coloca o ficheiro dentro da mesma
 
+A função auxUntar devolve o caso nil, como tal apenas devolve o caso vazio
+
+Através do catamorfismo de listas a função untar cria uma |FS a b| e usando joinDupDirs
+para juntar directorias que estejam na mesma pasta e que possuam o mesmo identificador.
 
 \begin{code}
 untar :: (Eq a) => [(Path a, b)] -> FS a b
