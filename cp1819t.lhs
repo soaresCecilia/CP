@@ -1290,7 +1290,22 @@ calcula e = cataExpr (either id junta) e
 Esta função trata-se efetivamente de um compilador, em que gera código posfixo
 para uma stack. Na verdade, a stack calcula o valor da string.
 
+\begin{code}
+calculation :: String -> Codigo
+calculation "+" = ["ADD"]
+calculation "*" = ["MULT"]
+calculation "-" = ["MINUS"]
+calculation "/" = ["DIV"]
 
+
+compile :: String -> Codigo
+compile = cataExpr (either inteiro op) . strings
+  where strings = fst . head . readExp
+        inteiro x = ["PUSH" ++ show x]
+        op (Op x,(y,z)) = y ++ z ++ (calculation x)
+
+
+\end{code}
 
 \item Função |show'|
 
@@ -1398,23 +1413,6 @@ calcAux H (l1, a1) (l2,a2) = (l1 + l2, v a1 a2)
 dimen :: X Caixa Tipo -> (Int, Int)
 dimen (Unid ((largura, altura), _)) = (largura,altura)
 dimen (Comp tipo esq dir) = calcAux tipo (dimen esq) (dimen dir)
-
-{-  (0, 0)
-dimen (Comp tipo (Unid ((tex, tey), _)) (Unid _)) =
-     calc tipo (0, 0) (
-dimen (Comp tipo esquerda (Unid _)) =
-     calc tipo (ex, ey) (fromIntegral(tex), fromIntegral(tey))
-     where (ex, ey) = dimen esquerda
-           (tex, tey) = fst (last (collectLeafs esquerda))
-dimen (Comp tipo (Unid ((tex, tey), _)) direita) =
-     calc tipo (dx, dy) (fromIntegral(tex), fromIntegral(tey))
-     where (dx, dy) = dimen direita
-dimen (Comp tipo esquerda direita) =
-     calc tipo (dx, dy) (fromIntegral(tex), fromIntegral(tey))
-     where (ex, ey) = dimen esquerda
-           (dx, dy) = dimen direita
-           (tex, tey) = fst (last (collectLeafs esquerda))
-           (tdx, tdy) = fst (last (collectLeafs direita)) -}
 
 cai_ex2 :: ((X Caixa Tipo), Origem)
 cai_ex2 = (myex2,(0,0))
