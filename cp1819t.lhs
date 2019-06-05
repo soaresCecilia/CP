@@ -1378,6 +1378,39 @@ show' = cataExpr (either show expressao)
 Para a resolução do nosso problema 2 como cata/ana/hilo-morfismos aprendidos na
 disciplina de Cálculo de Programas, definimos as funções |inL2D|, |outL2D|, |recL2D|,
 |cataL2D|, |anaL2D| e |hyloL2D|.
+De facto, são as corretas composições destas funções que permitem resolver
+este problema como um cata, ana ou hilomorfismo.
+Com efeito, o diagrama genérico destes três sistemas de composição de funções é:
+
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+   |L2D|
+          \ar[d]_-{|anaL2D g|}
+           \ar[r]^-{|g|}
+&
+   |Unid + b >< (L2D >< L2D)|
+          \ar[d]^{|recL2D(anaL2D g)|}
+\\
+    |LD2|
+       \ar[d]_-{|cataL2D h|}
+       \ar[r]^-{|outL2D|}
+&
+    |Unid + b >< (L2D >< L2D)|
+          \ar[l]^-{|inL2D|}
+           \ar[d]^{|recL2D(cataL2D h)|}
+\\
+   |L2D|
+&
+   |Unid + b >< (L2D >< L2D)|
+       \ar[l]^-{|h|}
+}
+\end{eqnarray*}
+
+Contudo, por falta de tempo não conseguimos responder inteiramente a esta questão,
+tendo apenas conseguido gerar o seguinte programa em linguagem Haskell sem nos socorrermos
+de nenhum cata/ana ou hilomorfismo.
+
+Todavia, isso não nos impediu de demonstrar que sabemos deduzir as seguintes funções:
 
 \begin{code}
 inL2D :: Either a (b, (X a b,X a b)) -> X a b
@@ -1394,11 +1427,12 @@ cataL2D g = g . (recL2D (cataL2D g)) . outL2D
 
 anaL2D g = inL2D . (recL2D (anaL2D g)) . g
 
-
 hyloL2D h g = cataL2D h . anaL2D g
 
 collectLeafs :: X a b -> [a]
 collectLeafs (Unid a) = undefined
+
+
 
 v :: Int -> Int -> Int
 v l1 l2 | l1 >= l2 = l1
@@ -1459,33 +1493,6 @@ caixasAndOrigin2Pict :: (X Caixa Tipo, Origem) -> G.Picture
 caixasAndOrigin2Pict = undefined
 \end{code}
 
-De facto, são as corretas composições destas funções que permitem resolver
-este problema como um cata, ana ou hilomorfismo.
-Com efeito, o diagrama genérico destes três sistemas de composição de funções é:
-
-\begin{eqnarray*}
-\xymatrix@@C=3cm{
-   |L2D|
-          \ar[d]_-{|anaL2D g|}
-           \ar[r]^-{|g|}
-&
-   |Unid + b >< (L2D >< L2D)|
-          \ar[d]^{|recL2D(anaL2D g)|}
-\\
-    |LD2|
-       \ar[d]_-{|cataL2D h|}
-       \ar[r]^-{|outL2D|}
-&
-    |Unid + b >< (L2D >< L2D)|
-          \ar[l]^-{|inL2D|}
-           \ar[d]^{|recL2D(cataL2D h)|}
-\\
-   |L2D|
-&
-   |Unid + b >< (L2D >< L2D)|
-       \ar[l]^-{|h|}
-}
-\end{eqnarray*}
 
 
 \subsection*{Problema 3}
@@ -1603,7 +1610,7 @@ cos' x = prj . for loop init where
 Triologia ``ana-cata-hilo":
 
 O último problema prende-se com o desenvolvimento de uma biblioteca de funções
-que manipula ficheiros.
+que manipula ficheiros. Esta
 
 \begin{enumerate}
 
@@ -1634,10 +1641,14 @@ anaFS g = inFS . (baseFS id id (anaFS g)) . g
 
 
 
+\item |Diagrama de cataFS|
+
+O diagrama do cataFS é representado infra. De acordo com o referido diagrama
+o tipo de dados |FS| quando serve de entrada à função
 
 \begin{eqnarray*}
 \xymatrix@@C=2cm{
-    |FS|
+    |FS a b|
            \ar[d]_-{|cataFS g|}
 &
     |[(A >< (B + FS a b))]|
@@ -1646,7 +1657,7 @@ anaFS g = inFS . (baseFS id id (anaFS g)) . g
 \\
      |C|
 &
-     |[(A >< (B + Bool))]|
+     |[(A >< (B + C))]|
            \ar[l]^-{|g|}
 }
 \end{eqnarray*}
@@ -1654,9 +1665,9 @@ anaFS g = inFS . (baseFS id id (anaFS g)) . g
 
 
 Outras funções pedidas:
+A nossa função check não foi definida como um catamorfismo. Esta função vai
+verifica se em cada diretoria existe identificadores de ficheiros repetidos.
 \begin{code}
-
-
 check :: (Eq a) => FS a b -> Bool
 check (FS [])                     = True
 check (FS ((x, File y):t))        = checkFiles (FS ((x, File y):t)) &&
@@ -1664,14 +1675,32 @@ check (FS ((x, File y):t))        = checkFiles (FS ((x, File y):t)) &&
 check (FS ((x, Dir diretoria):t)) = checkFiles (FS ((x, Dir diretoria):t)) &&
                                     checkFiles diretoria &&
                                     check (FS t)
+\end{code}
 
+Recolhe o conteúdo de todos os ficheiros num arquivo indexado pelo |path|.
+
+
+Definimos a função |tar| como um catamorfismo que recebe de entrada um |FS|
+e devolve
+
+
+\begin{code}
+tar :: FS a b -> [(Path a, b)]
+tar = cataFS( concat.map((either (singl.(singl >< id)) (auxTar)).distr))
 
 auxTar :: (a,[([a],b)]) -> [([a],b)]
 auxTar (a, []) = []
 auxTar (a, (l,b):xs) = (a:l,b):(auxTar (a,xs))
 
-tar :: FS a b -> [(Path a, b)]
-tar = cataFS( concat.map((either (singl.(singl >< id) ) (auxTar) ).distr))
+\end{code}
+
+A função novoFich pega numa lista de identificadores do ficheiro e diretorias e
+e coloca o ficheiro
+
+
+\begin{code}
+untar :: (Eq a) => [(Path a, b)] -> FS a b
+untar = joinDupDirs . cataList(either (auxUntar) novoFich)
 
 novoFich :: (([a],b), FS a b) -> FS a b
 novoFich (([x],b), FS l)   = FS ((x,File b):l)
@@ -1679,11 +1708,10 @@ novoFich (((h:t),b), FS l) = FS (singl(h, Dir (novoFich ((t,b), FS l))))
 
 auxUntar :: () -> FS a b
 auxUntar () = FS []
-
-untar :: (Eq a) => [(Path a, b)] -> FS a b
-untar = joinDupDirs . cataList(either (auxUntar) novoFich)
+\end{code}
 
 
+\begin{code}
 find :: (Eq a) => a -> FS a b -> [Path a]
 find a = cataFS ( concat.map ( ( either (auxFind1 a) (auxFind2 a) ).distr ) )
 
@@ -1695,7 +1723,10 @@ auxFind2 :: (Eq a) => a -> (a,[[a]]) -> [[a]]
 auxFind2 file (x,(h:t)) | (elem file h) = (x:h):auxFind2 file (x,t)
                         | otherwise = auxFind2 file (x,t)
 auxFind2 file _ = []
+\end{code}
 
+
+\begin{code}
 new :: (Eq a) => Path a -> b -> FS a b -> FS a b
 new = undefined
 
