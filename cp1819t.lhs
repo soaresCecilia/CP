@@ -1394,23 +1394,6 @@ dimen :: X Caixa Tipo -> (Int, Int)
 dimen (Unid ((largura, altura), _)) = (largura,altura)
 dimen (Comp tipo esq dir) = calcAux tipo (dimen esq) (dimen dir)
 
-{-  (0, 0)
-dimen (Comp tipo (Unid ((tex, tey), _)) (Unid _)) =
-     calc tipo (0, 0) (
-dimen (Comp tipo esquerda (Unid _)) =
-     calc tipo (ex, ey) (fromIntegral(tex), fromIntegral(tey))
-     where (ex, ey) = dimen esquerda
-           (tex, tey) = fst (last (collectLeafs esquerda))
-dimen (Comp tipo (Unid ((tex, tey), _)) direita) =
-     calc tipo (dx, dy) (fromIntegral(tex), fromIntegral(tey))
-     where (dx, dy) = dimen direita
-dimen (Comp tipo esquerda direita) =
-     calc tipo (dx, dy) (fromIntegral(tex), fromIntegral(tey))
-     where (ex, ey) = dimen esquerda
-           (dx, dy) = dimen direita
-           (tex, tey) = fst (last (collectLeafs esquerda))
-           (tdx, tdy) = fst (last (collectLeafs direita)) -}
-
 cai_ex2 :: ((X Caixa Tipo), Origem)
 cai_ex2 = (myex2,(0,0))
 
