@@ -1678,7 +1678,7 @@ find :: (Eq a) => a -> FS a b -> [Path a]
 find a = cataFS ( concat.map ( ( either (auxFind1 a) (auxFind2 a) ).distr ) )
 
 auxFind1 :: (Eq a) => a -> (a,b) -> [[a]]
-auxFind1 x (a,b) | x == a = singl (singl a)
+auxFind1 file (a,b) | file == a = singl (singl a)
                  | otherwise = nil (nil)
 
 auxFind2 :: (Eq a) => a -> (a,[[a]]) -> [[a]]
