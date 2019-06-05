@@ -302,11 +302,11 @@
 \begin{tabular}{ll}
 \textbf{Grupo} nr. & 99 (preencher)
 \\\hline
-a11111 & Nome1 (preencher)	
+a11111 & Nome1 (preencher)
 \\
-a22222 & Nome2 (preencher)	
+a22222 & Nome2 (preencher)
 \\
-a33333 & Nome3 (preencher)	
+a33333 & Nome3 (preencher)
 \end{tabular}
 \end{center}
 
@@ -318,7 +318,7 @@ parte-se de um repertório de \emph{combinadores} que formam uma álgebra da
 programação (conjunto de leis universais e seus corolários) e usam-se esses
 combinadores para construir programas \emph{composicionalmente}, isto é,
 agregando programas já existentes.
-  
+
 Na sequência pedagógica dos planos de estudo dos dois cursos que têm
 esta disciplina, restringe-se a aplicação deste método à programação
 funcional em \Haskell. Assim, o presente trabalho prático coloca os
@@ -473,7 +473,7 @@ O valor zero é um elemento neutro da adição.
 \>[13]{}\Varid{addZero}\;\Varid{e}\mathrel{=}\Conid{Bop}\;\Varid{e}\;(\Conid{Op}\;\text{\ttfamily \char34 +\char34})\;(\Conid{Num}\;\mathrm{0}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-\end{propriedade}  
+\end{propriedade}
 \begin{propriedade}
 As operações de soma e multiplicação são comutativas.
 \begin{hscode}\SaveRestoreHook
@@ -489,7 +489,7 @@ As operações de soma e multiplicação são comutativas.
 \>[13]{}\Varid{g2}\mathrel{=}\uncurry{\uncurry{\Conid{Bop}}}\comp (\Varid{swap}\times\Varid{id})\comp \Varid{assocl}\comp (\Varid{id}\times\Varid{swap}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-\end{propriedade}  
+\end{propriedade}
 \end{itemize}
 \item
 Defina como \{cata, ana ou hilo\}-morfismos as funções
@@ -506,7 +506,7 @@ Defina como \{cata, ana ou hilo\}-morfismos as funções
 \ttfamily ~\char91{}\char34{}PUSH~3\char34{}\char44{}~\char34{}PUSH~2\char34{}\char44{}~\char34{}PUSH~4\char34{}\char44{}~\char34{}ADD\char34{}\char44{}~\char34{}MUL\char34{}\char93{}\\
 \ttfamily ~Tp4\char62{}~compile~\char34{}\char40{}3\char42{}2\char41{}\char43{}4\char34{}\\
 \ttfamily ~\char91{}\char34{}PUSH~3\char34{}\char44{}~\char34{}PUSH~2\char34{}\char44{}~\char34{}MUL\char34{}\char44{}~\char34{}PUSH~4\char34{}\char44{}~\char34{}ADD\char34{}\char93{}\\
-\ttfamily ~Tp4\char62{}~
+\ttfamily ~Tp4\char62{}
 \end{tabbing}
 \item \ensuremath{\Varid{show'}\mathbin{::}\Conid{Expr}\to \Conid{String}} - gera a representação textual
       de uma \ensuremath{\Conid{Expr}} pode encarar-se como o \uk{pretty printer}
@@ -522,7 +522,7 @@ tal como a propriedade seguinte descreve:
 \>[B]{}\Varid{prop\char95 inv}\mathrel{=}\p1\comp \Varid{head}\comp \Varid{readExp}\comp \Varid{show'}\equiv\Varid{id}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-\end{propriedade}  
+\end{propriedade}
 \end{itemize}
 %% \item Generalize o tipo |Expr| de forma a admitir operadores
 %% unários (\eg\ \(-5\)) e repita os exercícios dos pontos anteriores.
@@ -530,7 +530,7 @@ tal como a propriedade seguinte descreve:
 
 \paragraph{Valorização}
 Em anexo é apresentado código \Haskell\ que permite declarar
-\ensuremath{\Conid{Expr}} como instância da classe \ensuremath{\Conid{Read}}. Neste contexto,  
+\ensuremath{\Conid{Expr}} como instância da classe \ensuremath{\Conid{Read}}. Neste contexto,
 \ensuremath{\Varid{read}} pode ser vista como o analisador
 sintático do nosso minúsculo compilador de expressões aritméticas.
 
@@ -587,7 +587,7 @@ umas com as outras segundo padrões especificados por vários
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{data}\;\Conid{Tipo}\mathrel{=}\Conid{V}\mid \Conid{Vd}\mid \Conid{Ve}\mid \Conid{H}\mid \Conid{Ht}\mid \Conid{Hb}{}\<[E]%
+\>[B]{}\mathbf{data}\;\Conid{Tipo}\mathrel{=}\Conid{V}\mid \Conid{Vd}\mid \Conid{Ve}\mid \Conid{H}\mid \Conid{Ht}\mid \Conid{Hb}\;\mathbf{deriving}\;\Conid{Show}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 com o seguinte significado:
@@ -663,7 +663,7 @@ A informação mais relevante deste tipo é a referente à lista de
 ``caixas posicionadas'' (tipo \ensuremath{(\Conid{Origem},\Conid{Caixa})}). Regista-se aí a origem
 da caixa que, com a informação da sua altura e comprimento, permite
 definir todos os seus pontos (consideramos as caixas sempre paralelas
-aos eixos). 
+aos eixos).
 
 \begin{enumerate}
 \item Forneça a definição da função \ensuremath{\Varid{calc\char95 origems}}, que calcula as
@@ -706,7 +706,7 @@ Disponibiliza-se também a função
 \ColumnHook
 \end{hscode}\resethooks
 que dado um valor do tipo \ensuremath{\Varid{\Conid{G}.picture}} abre uma janela com esse valor desenhado. O objectivo
-final deste exercício é implementar então uma função 
+final deste exercício é implementar então uma função
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -716,7 +716,7 @@ final deste exercício é implementar então uma função
 que dada uma frase da linguagem \ensuremath{\Conid{L2D}} e coordenadas iniciais apresenta
 o respectivo desenho no ecrã.
 %
-\textbf{Sugestão}: 
+\textbf{Sugestão}:
 Use a função \ensuremath{\Varid{\Conid{G}.pictures}} disponibilizada na biblioteca \gloss{Gloss}.
 
 \Problema
@@ -802,7 +802,7 @@ função coseno:
 \begin{eqnarray*}
 	cos\ x = \sum_{i=0}^\infty \frac{(-1)^i}{(2i)!} x^{2i}
 \end{eqnarray*}
-Pretende-se o ciclo-\textsf{for} que implementa a função 
+Pretende-se o ciclo-\textsf{for} que implementa a função
 \ensuremath{\Varid{cos'}\;\Varid{x}\;\Varid{n}} que dá o valor dessa série tomando \ensuremath{\Varid{i}} até \ensuremath{\Varid{n}} inclusivé:
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -926,7 +926,7 @@ O que é para fazer:
     que não existem identificadores repetidos dentro da mesma directoria). \\
     \ensuremath{\Varid{check}\mathbin{::}\Conid{FS}\;\Varid{a}\;\Varid{b}\to \Conid{Bool}}
   \begin{propriedade}
-    A integridade de um sistema de ficheiros não depende da ordem em que os    
+    A integridade de um sistema de ficheiros não depende da ordem em que os
     últimos são listados na sua directoria:
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -936,7 +936,7 @@ O que é para fazer:
 \>[B]{}\Varid{prop\char95 check}\mathrel{=}\Varid{check}\comp (\Varid{cataFS}\;(\Varid{inFS}\comp \Varid{reverse}))\equiv\Varid{check}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-  \end{propriedade}  
+  \end{propriedade}
   \item Recolha do conteúdo de todos os ficheiros num arquivo indexado pelo \emph{path}.\\
     \ensuremath{\Varid{tar}\mathbin{::}\Conid{FS}\;\Varid{a}\;\Varid{b}\to [\mskip1.5mu (\Conid{Path}\;\Varid{a},\Varid{b})\mskip1.5mu]}
   \begin{propriedade}
@@ -950,7 +950,7 @@ O que é para fazer:
 \>[B]{}\Varid{prop\char95 tar}\mathrel{=}\length \comp \Varid{tar}\equiv\Varid{conta}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-  \end{propriedade}  
+  \end{propriedade}
   \item Transformação de um arquivo com o conteúdo dos ficheiros
     indexado pelo \emph{path} num sistema de ficheiros.\\
     \ensuremath{\Varid{untar}\mathbin{::}[\mskip1.5mu (\Conid{Path}\;\Varid{a},\Varid{b})\mskip1.5mu]\to \Conid{FS}\;\Varid{a}\;\Varid{b}} \\
@@ -970,7 +970,7 @@ O que é para fazer:
 \>[B]{}\Varid{validPaths}\mathrel{=}(\equiv \mathrm{0})\comp \length \comp (\Varid{filter}\;(\lambda (\Varid{a},\anonymous )\to \length \;\Varid{a}\equiv \mathrm{0})){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-\end{propriedade}  
+\end{propriedade}
   \item Localização de todos os \emph{paths} onde existe um
     determinado ficheiro.\\
     \ensuremath{\Varid{find}\mathbin{::}\Varid{a}\to \Conid{FS}\;\Varid{a}\;\Varid{b}\to [\mskip1.5mu \Conid{Path}\;\Varid{a}\mskip1.5mu]}
@@ -988,7 +988,7 @@ O que é para fazer:
 \>[7]{}\length \comp \uncurry{\Varid{find}}\equiv\length \comp \uncurry{\Varid{find}}\comp (\Varid{id}\times(\Varid{untar}\comp \Varid{tar})){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-  \end{propriedade}  
+  \end{propriedade}
   \item Criação de um novo ficheiro num determinado \emph{path}.\\
     \ensuremath{\Varid{new}\mathbin{::}\Conid{Path}\;\Varid{a}\to \Varid{b}\to \Conid{FS}\;\Varid{a}\;\Varid{b}\to \Conid{FS}\;\Varid{a}\;\Varid{b}}
   \begin{propriedade}
@@ -1015,9 +1015,9 @@ A adição de um ficheiro não existente no sistema não origina ficheiros dupli
 \end{hscode}\resethooks
 \textbf{Questão}: Supondo-se que no código acima se substitui a propriedade
 \ensuremath{\Varid{checkFiles}} pela propriedade mais fraca \ensuremath{\Varid{check}}, será que a propriedade
-\ensuremath{\Varid{prop\char95 new}} ainda é válida? Justifique a sua resposta. 
+\ensuremath{\Varid{prop\char95 new}} ainda é válida? Justifique a sua resposta.
 \end{propriedade}
- 
+
 \begin{propriedade}
 	A listagem de ficheiros logo após uma adição nunca poderá ser menor que a listagem
 	de ficheiros antes dessa mesma adição.
@@ -1033,7 +1033,7 @@ A adição de um ficheiro não existente no sistema não origina ficheiros dupli
 \>[7]{}\Varid{validPath}\mathrel{=}(\not\equiv \mathrm{0})\comp \length \comp \p1\comp \p1{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-  \end{propriedade}  
+  \end{propriedade}
   \item Duplicação de um ficheiro.\\
     \ensuremath{\Varid{cp}\mathbin{::}\Conid{Path}\;\Varid{a}\to \Conid{Path}\;\Varid{a}\to \Conid{FS}\;\Varid{a}\;\Varid{b}\to \Conid{FS}\;\Varid{a}\;\Varid{b}}
   \begin{propriedade}
@@ -1050,7 +1050,7 @@ A adição de um ficheiro não existente no sistema não origina ficheiros dupli
 \>[13]{}\length \comp \Varid{tar}\comp \p2\leq\length \comp \Varid{tar}\comp \uncurry{\uncurry{\Varid{cp}}}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-  \end{propriedade}  
+  \end{propriedade}
   \item Eliminação de um ficheiro.\\
     \ensuremath{\Varid{rm}\mathbin{::}\Conid{Path}\;\Varid{a}\to \Conid{FS}\;\Varid{a}\;\Varid{b}\to \Conid{FS}\;\Varid{a}\;\Varid{b}}
 
@@ -1086,20 +1086,20 @@ Adicionar um ficheiro e de seguida remover o mesmo não origina novos ficheiros 
 \>[10]{}\Varid{validPath}\mathrel{=}(\not\equiv \mathrm{0})\comp \length \comp \p1\comp \p1{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-\end{propriedade}  
+\end{propriedade}
   \end{enumerate}
 \end{enumerate}
 
-\paragraph{Valorização} 
+\paragraph{Valorização}
 
 Definir uma função para visualizar em \graphviz{Graphviz}
 a estrutura de um sistema de ficheiros. A Figura~\ref{ex_prob1}, por exemplo,
 apresenta a estrutura de um sistema com precisamente dois ficheiros dentro
-de uma directoria chamada \ensuremath{\text{\ttfamily \char34 d1\char34}}. 
+de uma directoria chamada \ensuremath{\text{\ttfamily \char34 d1\char34}}.
 
 Para realizar este exercício será necessário apenas  escrever o anamorfismo
 \begin{quote}
-\ensuremath{\Varid{cFS2Exp}\mathbin{::}(\Varid{a},\Conid{FS}\;\Varid{a}\;\Varid{b})\to (\Conid{Exp}\;()\;\Varid{a})} 
+\ensuremath{\Varid{cFS2Exp}\mathbin{::}(\Varid{a},\Conid{FS}\;\Varid{a}\;\Varid{b})\to (\Conid{Exp}\;()\;\Varid{a})}
 \end{quote}
 que converte a estrutura de um sistema de ficheiros numa árvore de expressões
 descrita em \href{http://wiki.di.uminho.pt/twiki/pub/Education/CP/MaterialPedagogico/Exp.hs}{Exp.hs}.
@@ -1120,7 +1120,7 @@ A função \ensuremath{\Varid{dotFS}} depois tratará de passar a estrutura do s
 \appendix
 
 \section{Como exprimir cálculos e diagramas em LaTeX/lhs2tex}
-Estudar o texto fonte deste trabalho para obter o efeito:\footnote{Exemplos tirados de \cite{Ol18}.} 
+Estudar o texto fonte deste trabalho para obter o efeito:\footnote{Exemplos tirados de \cite{Ol18}.}
 \begin{eqnarray*}
 \start
 	\ensuremath{\Varid{id}\mathrel{=}\conj{\Varid{f}}{\Varid{g}}}
@@ -1135,8 +1135,8 @@ Estudar o texto fonte deste trabalho para obter o efeito:\footnote{Exemplos tira
 \qed
 \end{eqnarray*}
 
-Os diagramas podem ser produzidos recorrendo à \emph{package} \LaTeX\ 
-\href{https://ctan.org/pkg/xymatrix}{xymatrix}, por exemplo: 
+Os diagramas podem ser produzidos recorrendo à \emph{package} \LaTeX\
+\href{https://ctan.org/pkg/xymatrix}{xymatrix}, por exemplo:
 \begin{eqnarray*}
 \xymatrix@C=2cm{
     \ensuremath{\N_0}
@@ -1160,7 +1160,7 @@ onde se pretende implementar um ciclo que implemente
 o cálculo da aproximação até \ensuremath{\Varid{i}\mathrel{=}\Varid{n}} da função exponencial $exp\ x = e^x$
 via série de Taylor:
 \begin{eqnarray}
-	exp\ x 
+	exp\ x
 & = &
 	\sum_{i=0}^{\infty} \frac {x^i} {i!}
 \end{eqnarray}
@@ -1792,71 +1792,542 @@ envolvendo \gloss{Gloss}. Nesse caso, o teste em causa deve fazer parte de uma f
 \section{Soluções dos alunos}\label{sec:resolucao}
 Os alunos devem colocar neste anexo as suas soluções aos exercícios
 propostos, de acordo com o "layout" que se fornece. Não podem ser
-alterados os nomes ou tipos das funções dadas, mas pode ser adicionado texto e/ou 
+alterados os nomes ou tipos das funções dadas, mas pode ser adicionado texto e/ou
 outras funções auxiliares que sejam necessárias.
 
 \subsection*{Problema 1}
 
+O problema 1 tem como tema a construção de um programa de compiladores
+com base numa linguagem funcional, recorrendo a cata/ana/hilo-morfismos da
+linguagem em causa.
+
+De modo a resolvê-lo tivemos de definir algumas funções que nos ajudaram
+a implementar as soluções das respetivas alíneas.
+
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{inExpr}\mathbin{::}\Conid{Int}+(\Conid{Op},(\Conid{Expr},\Conid{Expr}))\to \Conid{Expr}{}\<[E]%
 \\
-\>[B]{}\Varid{inExpr}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{inExpr}\mathrel{=}\alt{\Conid{Num}}{\Varid{bop'}}{}\<[E]%
+\\
+\>[B]{}\hsindent{5}{}\<[5]%
+\>[5]{}\mathbf{where}\;\Varid{bop'}\;(\Varid{o},(e_1 ,e_2 ))\mathrel{=}\Conid{Bop}\;e_1 \;\Varid{o}\;e_2 {}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{outExpr}\mathbin{::}\Conid{Expr}\to \Conid{Int}+(\Conid{Op},(\Conid{Expr},\Conid{Expr})){}\<[E]%
 \\
-\>[B]{}\Varid{outExpr}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{outExpr}\;(\Conid{Num}\;\Varid{a})\mathrel{=}i_1\;(\Varid{a}){}\<[E]%
+\\
+\>[B]{}\Varid{outExpr}\;(\Conid{Bop}\;e_1 \;\Varid{o}\;e_2 )\mathrel{=}i_2\;(\Varid{o},(e_1 ,e_2 )){}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\Varid{recExpr}\;\Varid{f}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{recExpr}\;\Varid{f}\mathrel{=}\Varid{id}+(\Varid{id}\times(\Varid{f}\times\Varid{f})){}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\Varid{cataExpr}\;\Varid{g}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{cataExpr}\;\Varid{g}\mathrel{=}\Varid{g}\comp (\Varid{recExpr}\;(\Varid{cataExpr}\;\Varid{g}))\comp \Varid{outExpr}{}\<[E]%
 \\[\blanklineskip]%
+\>[B]{}\Varid{anaExpr}\;\Varid{g}\mathrel{=}\Varid{inExpr}\comp \Varid{recExpr}\;(\Varid{anaExpr}\;\Varid{g})\comp \Varid{g}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{hyloExpr}\;\Varid{h}\;\Varid{g}\mathrel{=}\Varid{cataExpr}\;\Varid{h}\comp \Varid{anaExpr}\;\Varid{g}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Estas funções, nomeadamente \ensuremath{\Varid{inExpr}}, \ensuremath{\Varid{outExpr}},
+\ensuremath{\Varid{recExpr}}, \ensuremath{\Varid{cataExpr}}, \ensuremath{\Varid{anaExpr}} e \ensuremath{\Varid{hyloExpr}}, podem ser
+deduzidas a partir do Tipo de Dados em questão, com o auxílio dos
+conhecimentos adquiridos na unidade curricular de Cálculo
+de Programas, bem como de alguns diagramas específicos.
+
+\vspace{0.2cm}
+
+Uma vez que uma Expr é um \ensuremath{\Conid{Num}\;\Conid{Int}} ou \ensuremath{\Conid{Bop}\;\Conid{Expr}\;\Conid{Op}\;\Conid{Expr}}
+sabemos que o \ensuremath{\Varid{inExpr}} e o \ensuremath{\Varid{outExpr}} deverão "construir" ou "desconstruir"
+a Expr, respetivamente, logo, conseguimos representar os diagramas:
+\begin{eqnarray*}
+\xymatrix@C=2cm{
+     \ensuremath{\Conid{Expr}}
+&
+     \ensuremath{\Conid{Int}\mathbin{+}(\Conid{Op}\times(\Conid{Expr}\times\Conid{Expr}))}
+           \ar[l]^-{\ensuremath{\Varid{inExpr}}}
+}
+\end{eqnarray*}
+
+\begin{eqnarray*}
+\xymatrix@C=2cm{
+     \ensuremath{\Conid{Expr}}
+           \ar[r]_-{\ensuremath{\Varid{outExpr}}}
+&
+     \ensuremath{\Conid{Int}\mathbin{+}(\Conid{Op}\times(\Conid{Expr}\times\Conid{Expr}))}
+}
+\end{eqnarray*}
+
+
+
+Assim, conseguimos concluir que as definições das referidas funções são:
+\begin{eqnarray*}
+\start
+\ensuremath{\Varid{inExpr}\mathrel{=}\alt{\Conid{Num}}{\Varid{bop'}}}
+      \ensuremath{\mathbf{where}\;\Varid{bop'}\;(\Varid{o},(e_1 ,e_2 ))\mathrel{=}\Conid{Bop}\;e_1 \;\Varid{o}\;e_2 }
+\end{eqnarray*}
+\begin{eqnarray*}
+\start
+\ensuremath{\Varid{outExpr}\;(\Conid{Num}\;\Varid{a})\mathrel{=}i_1\;(\Varid{a})}
+\more
+\ensuremath{\Varid{outExpr}\;(\Conid{Bop}\;e_1 \;\Varid{o}\;e_2 )\mathrel{=}i_2\;(\Varid{o},(e_1 ,e_2 ))}
+\end{eqnarray*}
+
+
+Quanto às restantes funções, \ensuremath{\Varid{recExpr}}, \ensuremath{\Varid{cataExpr}},
+\ensuremath{\Varid{anaExpr}} e \ensuremath{\Varid{hyloExpr}}, estas foram deduzidas através do diagrama
+que podemos observar infra.
+A título de exemplo, assumimos que as funções \ensuremath{\Varid{g}} e \ensuremath{\Varid{h}} são a função identidade
+
+\begin{eqnarray*}
+\xymatrix@C=3cm{
+   \ensuremath{\Conid{Expr}}
+          \ar[d]_-{\ensuremath{\Varid{anaExpr}\;\Varid{g}}}
+           \ar[r]^-{\ensuremath{\Varid{g}}}
+&
+   \ensuremath{\Conid{Int}\mathbin{+}(\Conid{Op}\times(\Conid{Expr}\times\Conid{Expr})}
+          \ar[d]^{\ensuremath{\Varid{recExpr}\;(\Varid{anaExpr}\;\Varid{g})}}
+\\
+    \ensuremath{\Conid{Expr}}
+       \ar[d]_-{\ensuremath{\Varid{cataExpr}\;\Varid{h}}}
+       \ar[r]^-{\ensuremath{\Varid{outExpr}}}
+&
+    \ensuremath{\Conid{Int}\mathbin{+}(\Conid{Op}\times(\Conid{Expr}\times\Conid{Expr})}
+          \ar[l]^-{\ensuremath{\Varid{inExpr}}}
+           \ar[d]^{\ensuremath{\Varid{recExpr}\;(\Varid{cataExpr}\;\Varid{h})}}
+\\
+   \ensuremath{\Conid{Expr}}
+&
+   \ensuremath{\Conid{Int}\mathbin{+}(\Conid{Op}\times(\Conid{Expr}\times\Conid{Expr})}
+       \ar[l]^-{\ensuremath{\Varid{h}}}
+}
+\end{eqnarray*}
+
+Pelo que, definimos cada uma dessas funções como:
+\begin{eqnarray*}
+\start
+\ensuremath{\Varid{recExpr}\;\Varid{f}\mathrel{=}\Varid{id}\mathbin{+}(\Varid{id}\times(\Varid{f}\times\Varid{f}))}
+\more
+\ensuremath{\Varid{cataExpr}\;\Varid{h}\mathrel{=}\Varid{h}\comp (\Varid{recExpr}\;(\Varid{cataExpr}\;\Varid{h}))\comp \Varid{outExpr}}
+\more
+\ensuremath{\Varid{anaExpr}\;\Varid{g}\mathrel{=}\Varid{inExpr}\comp (\Varid{recExpr}\;(\Varid{anaExpr}\;\Varid{g}))\comp \Varid{g}}
+\more
+\ensuremath{\Varid{hyloExpr}\;\Varid{h}\;\Varid{g}\mathrel{=}\Varid{cataExpr}\;\Varid{h}\comp \Varid{anaExpr}\;\Varid{g}}
+\end{eqnarray*}
+
+
+Na resolução das questões seguintes deste problema recorremos a alguns diagramas,
+através dos quais retiramos a definição de cada uma das funções que se pede.
+
+
+\begin{enumerate}
+\item Função \ensuremath{\Varid{calcula}}
+
+O objetivo da função \ensuremath{\Varid{calcula}} é calcular o valor de uma expressão, pelo que o
+seu diagrama é:
+
+\begin{eqnarray*}
+\xymatrix@C=2cm{
+    \ensuremath{\Conid{Expr}}
+           \ar[d]_-{\ensuremath{\Varid{cataExpr}\;\Varid{g}}}
+&
+    \ensuremath{\Conid{Int}\mathbin{+}(\Conid{Op}\times(\Conid{Expr}\times\Conid{Expr})}
+           \ar[d]^{\ensuremath{\Varid{recExpr}\;(\Varid{cataExpr}\;\Varid{g})}}
+           \ar[l]_-{\ensuremath{\Varid{inExpr}}}
+\\
+     \ensuremath{\Conid{Int}}
+&
+     \ensuremath{\Conid{Int}\mathbin{+}(\Conid{Op}\times(\Conid{Int}\times\Conid{Int})}
+           \ar[l]^-{\ensuremath{\Varid{g}}}
+}
+\end{eqnarray*}
+
+
+O objetivo é descobrir o gene \ensuremath{\Varid{g}}, para assim termos a definição final com
+algo do género \ensuremath{\Varid{calcula}\mathrel{=}\Varid{cataExpr}\;\Varid{g}}.
+
+Observando a expressão que obtemos após a aplicação do functor \ensuremath{\Varid{recExpr}} e sabendo
+que o resultado final terá de ser o calculo da expressão em causa,
+deduzimos que o \ensuremath{\Varid{g}} terá que ser um ``either'', \ensuremath{\Varid{g}\mathrel{=}\alt{\Varid{id}}{\Varid{junta}}}.
+Assim, do lado direito irá devolver o \ensuremath{\Conid{Int}} e do outro tratar \ensuremath{(\Conid{Op}\times(\Conid{Int}\times\Conid{Int})},
+consoante a operação aritmética em causa.
+Desta feita, a função \ensuremath{\Varid{calcula}} é:
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{36}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{calcula}\mathbin{::}\Conid{Expr}\to \Conid{Int}{}\<[E]%
 \\
-\>[B]{}\Varid{calcula}\mathrel{=}\bot {}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\Varid{show'}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{calcula}\;\Varid{e}\mathrel{=}\Varid{cataExpr}\;\alt{\Varid{id}}{\Varid{junta}}\;\Varid{e}{}\<[E]%
+\\
+\>[B]{}\hsindent{9}{}\<[9]%
+\>[9]{}\mathbf{where}\;\Varid{junta}\;(\Conid{Op}\;\Varid{op},(\Varid{n1},\Varid{n2}))\mid \Varid{op}\equiv \text{\ttfamily \char34 +\char34}\mathrel{=}\Varid{n1}\mathbin{+}\Varid{n2}{}\<[E]%
+\\
+\>[9]{}\hsindent{27}{}\<[36]%
+\>[36]{}\mid \Varid{op}\equiv \text{\ttfamily \char34 -\char34}\mathrel{=}\Varid{n1}\mathbin{-}\Varid{n2}{}\<[E]%
+\\
+\>[9]{}\hsindent{27}{}\<[36]%
+\>[36]{}\mid \Varid{op}\equiv \text{\ttfamily \char34 *\char34}\mathrel{=}\Varid{n1}\mathbin{*}\Varid{n2}{}\<[E]%
+\\
+\>[9]{}\hsindent{27}{}\<[36]%
+\>[36]{}\mid \Varid{op}\equiv \text{\ttfamily \char34 /\char34}\mathrel{=}\Varid{n1}\mathbin{\Varid{`div`}}\Varid{n2}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\item Função \ensuremath{\Varid{compile}}
+
+
+Esta função trata-se efetivamente de um compilador, em que gera código posfixo
+para uma stack. Na verdade, a stack calcula o valor da string.
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{15}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{19}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{calculation}\mathbin{::}\Conid{String}\to \Conid{String}{}\<[E]%
+\\
+\>[B]{}\Varid{calculation}\;\text{\ttfamily \char34 +\char34}\mathrel{=}\text{\ttfamily \char34 ADD\char34}{}\<[E]%
+\\
+\>[B]{}\Varid{calculation}\;\text{\ttfamily \char34 *\char34}\mathrel{=}\text{\ttfamily \char34 MULT\char34}{}\<[E]%
+\\
+\>[B]{}\Varid{calculation}\;\text{\ttfamily \char34 -\char34}\mathrel{=}\text{\ttfamily \char34 MINUS\char34}{}\<[E]%
+\\
+\>[B]{}\Varid{calculation}\;\text{\ttfamily \char34 /\char34}\mathrel{=}\text{\ttfamily \char34 DIV\char34}{}\<[E]%
+\\
+\>[B]{}\Varid{calculation}\;{}\<[15]%
+\>[15]{}\anonymous {}\<[19]%
+\>[19]{}\mathrel{=}\text{\ttfamily \char34 UNDEFINED\char34}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{compile}\mathbin{::}\Conid{String}\to \Conid{Codigo}{}\<[E]%
 \\
-\>[B]{}\Varid{compile}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{compile}\mathrel{=}\Varid{cataList}\;\alt{\Varid{nil}}{\Varid{compila}}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mathbf{where}\;\Varid{compila}\;(\Varid{x},\Varid{xs})\mathrel{=}\bot {}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\commentbegin 
+compile bolt = aux2 (fst((readExp bolt)!!0))
+                      where
+                      aux2 (Num a) = ["PUSH " ++ show a]
+                      aux2 (Bop (Num a) (Op calc) (Num b)) = ["PUSH " ++ show a] ++ ["PUSH " ++ show b] ++ [calculation calc]
+                      aux2 (Bop exp1 (Op calc) (Num a)) =  aux2 exp1 ++ ["PUSH " ++ show a] ++ [calculation calc]
+                      aux2 (Bop (Num a) (Op calc) exp2) = ["PUSH " ++ show a] ++ aux2 exp2 ++ [calculation calc]
+                      aux2 (Bop exp1 (Op calc) exp2) = aux2 exp1 ++ aux2 exp2 ++ [calculation calc]
+
+num1 :: Expr
+num1 = Num 1
+num2 :: Expr
+num2 = Num 2
+num10 :: Expr
+num10 = Num 10
+opMais :: Op
+opMais = Op "+"
+opDiv :: Op
+opDiv = Op "/"
+op :: Expr
+op = (Bop num1 (Op "-") num2)
+
+opComplex :: Expr
+opComplex = (Bop (Bop num1 (Op "*") num10) (Op "-") (Num (-1)))
+left :: Either Int (Op,(Expr,Expr))
+left = Left 2
+
+right :: Either Int (Op,(Expr,Expr))
+right = Right (Op "3",(Num 10,Num 1)) \commentend}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
+
+\item Função \ensuremath{\Varid{show'}}
+
+Esta função gera a representação textual de uma \ensuremath{\Conid{Expr}}, sendo o seu retorno
+uma \ensuremath{\Conid{String}}
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{7}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{show'}\mathbin{::}\Conid{Expr}\to \Conid{String}{}\<[E]%
+\\
+\>[B]{}\Varid{show'}\mathrel{=}\Varid{cataExpr}\;\alt{\Varid{show}}{\Varid{expressao}}{}\<[E]%
+\\
+\>[B]{}\hsindent{7}{}\<[7]%
+\>[7]{}\mathbf{where}\;\Varid{expressao}\;(\Conid{Op}\;\Varid{op},(\Varid{a},\Varid{b}))\mathrel{=}\text{\ttfamily \char34 (\char34}\plus \Varid{a}\plus \text{\ttfamily \char34 ~\char34}\plus \Varid{op}\plus \text{\ttfamily \char34 ~\char34}\plus \Varid{b}\plus \text{\ttfamily \char34 )\char34}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
 
 \subsection*{Problema 2}
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{7}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{13}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{15}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{23}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{27}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{inL2D}\mathbin{::}\Varid{a}+(\Varid{b},(\Conid{X}\;\Varid{a}\;\Varid{b},\Conid{X}\;\Varid{a}\;\Varid{b}))\to \Conid{X}\;\Varid{a}\;\Varid{b}{}\<[E]%
 \\
-\>[B]{}\Varid{inL2D}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{inL2D}\mathrel{=}\alt{\Conid{Unid}}{\Varid{uncurryComp}}{}\<[E]%
+\\
+\>[B]{}\hsindent{5}{}\<[5]%
+\>[5]{}\mathbf{where}\;\Varid{uncurryComp}\;(\Varid{b},(\Varid{x1},\Varid{x2}))\mathrel{=}\Conid{Comp}\;\Varid{b}\;\Varid{x1}\;\Varid{x2}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{outL2D}\mathbin{::}\Conid{X}\;\Varid{a}\;\Varid{b}\to \Varid{a}+(\Varid{b},(\Conid{X}\;\Varid{a}\;\Varid{b},\Conid{X}\;\Varid{a}\;\Varid{b})){}\<[E]%
 \\
-\>[B]{}\Varid{outL2D}\mathrel{=}\bot {}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\Varid{recL2D}\;\Varid{f}\mathrel{=}\bot {}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\Varid{cataL2D}\;\Varid{g}\mathrel{=}\bot {}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\Varid{anaL2D}\;\Varid{g}\mathrel{=}\bot {}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\Varid{collectLeafs}\mathrel{=}\bot {}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\Varid{dimen}\mathbin{::}\Conid{X}\;\Conid{Caixa}\;\Conid{Tipo}\to (\Conid{Float},\Conid{Float}){}\<[E]%
+\>[B]{}\Varid{outL2D}\;(\Conid{Unid}\;\Varid{a})\mathrel{=}i_1\;(\Varid{a}){}\<[E]%
 \\
-\>[B]{}\Varid{dimen}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{outL2D}\;(\Conid{Comp}\;\Varid{b}\;\Varid{x1}\;\Varid{x2})\mathrel{=}i_2\;(\Varid{b},(\Varid{x1},\Varid{x2})){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{recL2D}\;\Varid{f}\mathrel{=}\Varid{id}+(\Varid{id}\times(\Varid{f}\times\Varid{f})){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{cataL2D}\;\Varid{g}\mathrel{=}\Varid{g}\comp (\Varid{recL2D}\;(\Varid{cataL2D}\;\Varid{g}))\comp \Varid{outL2D}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{anaL2D}\;\Varid{g}\mathrel{=}\Varid{inL2D}\comp (\Varid{recL2D}\;(\Varid{anaL2D}\;\Varid{g}))\comp \Varid{g}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment  o a será uma lista de caixas}{}\<[E]%
+\\
+\>[B]{}\Varid{collectLeafs}\mathbin{::}\Conid{X}\;\Varid{a}\;\Varid{b}\to [\mskip1.5mu \Varid{a}\mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\Varid{collectLeafs}\;(\Conid{Unid}\;\Varid{a})\mathrel{=}[\mskip1.5mu \Varid{a}\mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\Varid{collectLeafs}\;(\Conid{Comp}\;\Varid{b}\;\Varid{x1}\;\Varid{x2})\mathrel{=}\Varid{collectLeafs}\;\Varid{x1}\plus \Varid{collectLeafs}\;\Varid{x2}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{myex1},\Varid{myex2},\Varid{myex3},\Varid{myex4}\mathbin{::}\Conid{L2D}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{myex1}\mathrel{=}\Conid{Unid}\;((\mathrm{100},\mathrm{300}),(\text{\ttfamily \char34 F\char34},\Varid{col\char95 green})){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{myex2}\mathrel{=}\Conid{Comp}\;\Conid{Ve}\;\Varid{b1}\;\Varid{b2}{}\<[E]%
+\\
+\>[B]{}\hsindent{9}{}\<[9]%
+\>[9]{}\mathbf{where}\;\Varid{b1}\mathrel{=}\Conid{Unid}\;((\mathrm{100},\mathrm{300}),(\text{\ttfamily \char34 F\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[9]{}\hsindent{6}{}\<[15]%
+\>[15]{}\Varid{b2}\mathrel{=}\Conid{Unid}\;((\mathrm{200},\mathrm{300}),(\text{\ttfamily \char34 H\char34},\Varid{col\char95 green})){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{myex3}\mathrel{=}\Conid{Comp}\;\Conid{Hb}\;(\Conid{Comp}\;\Conid{Ve}\;\Varid{b1}\;\Varid{b2})\;(\Conid{Comp}\;\Conid{Ve}\;\Varid{b3}\;\Varid{b4}){}\<[E]%
+\\
+\>[B]{}\hsindent{9}{}\<[9]%
+\>[9]{}\mathbf{where}\;\Varid{b1}\mathrel{=}\Conid{Unid}\;((\mathrm{100},\mathrm{300}),(\text{\ttfamily \char34 F\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[9]{}\hsindent{6}{}\<[15]%
+\>[15]{}\Varid{b2}\mathrel{=}\Conid{Unid}\;((\mathrm{200},\mathrm{300}),(\text{\ttfamily \char34 H\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[9]{}\hsindent{6}{}\<[15]%
+\>[15]{}\Varid{b3}\mathrel{=}\Conid{Unid}\;((\mathrm{300},\mathrm{300}),(\text{\ttfamily \char34 E\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[9]{}\hsindent{6}{}\<[15]%
+\>[15]{}\Varid{b4}\mathrel{=}\Conid{Unid}\;((\mathrm{400},\mathrm{300}),(\text{\ttfamily \char34 G\char34},\Varid{col\char95 green})){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{myex4}\mathrel{=}\Conid{Comp}\;\Conid{Hb}\;(\Conid{Comp}\;\Conid{Ve}\;\Varid{b1}\;\Varid{b2})\;(\Varid{b3}){}\<[E]%
+\\
+\>[B]{}\hsindent{9}{}\<[9]%
+\>[9]{}\mathbf{where}\;\Varid{b1}\mathrel{=}\Conid{Unid}\;((\mathrm{100},\mathrm{300}),(\text{\ttfamily \char34 F\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[9]{}\hsindent{6}{}\<[15]%
+\>[15]{}\Varid{b2}\mathrel{=}\Conid{Unid}\;((\mathrm{200},\mathrm{300}),(\text{\ttfamily \char34 H\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[9]{}\hsindent{6}{}\<[15]%
+\>[15]{}\Varid{b3}\mathrel{=}\Conid{Unid}\;((\mathrm{300},\mathrm{300}),(\text{\ttfamily \char34 G\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[B]{}\Varid{ex3}\mathbin{::}\Conid{L2D}{}\<[E]%
+\\
+\>[B]{}\Varid{ex3}\mathrel{=}\Conid{Comp}\;\Conid{Hb}\;(\Conid{Comp}\;\Conid{Ve}\;\Varid{bot}\;\Varid{top})\;(\Conid{Comp}\;\Conid{Ve}\;\Varid{gbox2}\;\Varid{ybox2}){}\<[E]%
+\\
+\>[B]{}\hsindent{7}{}\<[7]%
+\>[7]{}\mathbf{where}\;\Varid{bbox1}\mathrel{=}\Conid{Unid}\;((\mathrm{100},\mathrm{200}),(\text{\ttfamily \char34 A\char34},\Varid{col\char95 blue})){}\<[E]%
+\\
+\>[7]{}\hsindent{6}{}\<[13]%
+\>[13]{}\Varid{bbox2}\mathrel{=}\Conid{Unid}\;((\mathrm{150},\mathrm{200}),(\text{\ttfamily \char34 E\char34},\Varid{col\char95 blue})){}\<[E]%
+\\
+\>[7]{}\hsindent{6}{}\<[13]%
+\>[13]{}\Varid{gbox1}\mathrel{=}\Conid{Unid}\;((\mathrm{50},\mathrm{50}),(\text{\ttfamily \char34 B\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[7]{}\hsindent{6}{}\<[13]%
+\>[13]{}\Varid{gbox2}\mathrel{=}\Conid{Unid}\;((\mathrm{100},\mathrm{300}),(\text{\ttfamily \char34 F\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[7]{}\hsindent{6}{}\<[13]%
+\>[13]{}\Varid{rbox1}\mathrel{=}\Conid{Unid}\;((\mathrm{300},\mathrm{50}),(\text{\ttfamily \char34 C\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[7]{}\hsindent{6}{}\<[13]%
+\>[13]{}\Varid{rbox2}\mathrel{=}\Conid{Unid}\;((\mathrm{200},\mathrm{100}),(\text{\ttfamily \char34 G\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[7]{}\hsindent{6}{}\<[13]%
+\>[13]{}\Varid{wbox1}\mathrel{=}\Conid{Unid}\;((\mathrm{450},\mathrm{200}),(\text{\ttfamily \char34 \char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[7]{}\hsindent{6}{}\<[13]%
+\>[13]{}\Varid{ybox1}\mathrel{=}\Conid{Unid}\;((\mathrm{100},\mathrm{200}),(\text{\ttfamily \char34 D\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[7]{}\hsindent{6}{}\<[13]%
+\>[13]{}\Varid{ybox2}\mathrel{=}\Conid{Unid}\;((\mathrm{100},\mathrm{300}),(\text{\ttfamily \char34 H\char34},\Varid{col\char95 green})){}\<[E]%
+\\
+\>[7]{}\hsindent{6}{}\<[13]%
+\>[13]{}\Varid{bot}\mathrel{=}\Conid{Comp}\;\Conid{Hb}\;\Varid{wbox1}\;\Varid{bbox2}{}\<[E]%
+\\
+\>[7]{}\hsindent{6}{}\<[13]%
+\>[13]{}\Varid{top}\mathrel{=}(\Conid{Comp}\;\Conid{Ve}\;(\Conid{Comp}\;\Conid{Hb}\;\Varid{bbox1}\;\Varid{gbox1})\;(\Conid{Comp}\;\Conid{Hb}\;\Varid{rbox1}\;(\Conid{Comp}\;\Conid{H}\;\Varid{ybox1}\;\Varid{rbox2}))){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment  é o ponto final do LD2, i e, o ponto onde começa a ultima caixa}{}\<[E]%
+\\
+\>[B]{}\mbox{\onelinecomment }{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{v}\mathbin{::}\Conid{Int}\to \Conid{Int}\to \Conid{Int}{}\<[E]%
+\\
+\>[B]{}\Varid{v}\;\Varid{l1}\;\Varid{l2}\mid \Varid{l1}\geq \Varid{l2}\mathrel{=}\Varid{l1}{}\<[E]%
+\\
+\>[B]{}\hsindent{9}{}\<[9]%
+\>[9]{}\mid \Varid{otherwise}\mathrel{=}\Varid{l1}\mathbin{+}(\Varid{l2}\mathbin{\Varid{`div`}}\mathrm{2}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{calcAux}\mathbin{::}\Conid{Tipo}\to (\Conid{Int},\Conid{Int})\to (\Conid{Int},\Conid{Int})\to (\Conid{Int},\Conid{Int}){}\<[E]%
+\\
+\>[B]{}\Varid{calcAux}\;\Conid{V}\;(\Varid{l1},\Varid{a1})\;(\Varid{l2},\Varid{a2})\mathrel{=}(\Varid{v}\;\Varid{l1}\;\Varid{l2},\Varid{a1}\mathbin{+}\Varid{a2}){}\<[E]%
+\\
+\>[B]{}\Varid{calcAux}\;\Conid{Vd}\;(\Varid{l1},\Varid{a1})\;(\Varid{l2},\Varid{a2})\mathrel{=}(\Varid{max}\;\Varid{l1}\;\Varid{l2},\Varid{a1}\mathbin{+}\Varid{a2}){}\<[E]%
+\\
+\>[B]{}\Varid{calcAux}\;\Conid{Ve}\;(\Varid{l1},\Varid{a1})\;(\Varid{l2},\Varid{a2})\mathrel{=}(\Varid{max}\;\Varid{l1}\;\Varid{l2},\Varid{a1}\mathbin{+}\Varid{a2}){}\<[E]%
+\\
+\>[B]{}\Varid{calcAux}\;\Conid{Hb}\;(\Varid{l1},\Varid{a1})\;(\Varid{l2},\Varid{a2})\mathrel{=}(\Varid{l1}\mathbin{+}\Varid{l2},\Varid{max}\;\Varid{a1}\;\Varid{a2}){}\<[E]%
+\\
+\>[B]{}\Varid{calcAux}\;\Conid{Ht}\;(\Varid{l1},\Varid{a1})\;(\Varid{l2},\Varid{a2})\mathrel{=}(\Varid{l1}\mathbin{+}\Varid{l2},\Varid{a1}\mathbin{+}\Varid{a2}){}\<[E]%
+\\
+\>[B]{}\Varid{calcAux}\;\Conid{H}\;(\Varid{l1},\Varid{a1})\;(\Varid{l2},\Varid{a2})\mathrel{=}(\Varid{l1}\mathbin{+}\Varid{l2},\Varid{v}\;\Varid{a1}\;\Varid{a2}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{dimen}\mathbin{::}\Conid{X}\;\Conid{Caixa}\;\Conid{Tipo}\to (\Conid{Int},\Conid{Int}){}\<[E]%
+\\
+\>[B]{}\Varid{dimen}\;(\Conid{Unid}\;((\Varid{largura},\Varid{altura}),\anonymous ))\mathrel{=}(\Varid{largura},\Varid{altura}){}\<[E]%
+\\
+\>[B]{}\Varid{dimen}\;(\Conid{Comp}\;\Varid{tipo}\;\Varid{esq}\;\Varid{dir})\mathrel{=}\Varid{calcAux}\;\Varid{tipo}\;(\Varid{dimen}\;\Varid{esq})\;(\Varid{dimen}\;\Varid{dir}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\commentbegin   (0, 0)
+dimen (Comp tipo (Unid ((tex, tey), _)) (Unid _)) =
+     calc tipo (0, 0) (
+dimen (Comp tipo esquerda (Unid _)) =
+     calc tipo (ex, ey) (fromIntegral(tex), fromIntegral(tey))
+     where (ex, ey) = dimen esquerda
+           (tex, tey) = fst (last (collectLeafs esquerda))
+dimen (Comp tipo (Unid ((tex, tey), _)) direita) =
+     calc tipo (dx, dy) (fromIntegral(tex), fromIntegral(tey))
+     where (dx, dy) = dimen direita
+dimen (Comp tipo esquerda direita) =
+     calc tipo (dx, dy) (fromIntegral(tex), fromIntegral(tey))
+     where (ex, ey) = dimen esquerda
+           (dx, dy) = dimen direita
+           (tex, tey) = fst (last (collectLeafs esquerda))
+           (tdx, tdy) = fst (last (collectLeafs direita))  \commentend}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{cai\char95 ex2}\mathbin{::}((\Conid{X}\;\Conid{Caixa}\;\Conid{Tipo}),\Conid{Origem}){}\<[E]%
+\\
+\>[B]{}\Varid{cai\char95 ex2}\mathrel{=}(\Varid{myex2},(\mathrm{0},\mathrm{0})){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{pprint}\mathbin{::}\Conid{X}\;(\Conid{Caixa},\Conid{Origem})\;()\to \Conid{String}{}\<[E]%
+\\
+\>[B]{}\Varid{pprint}\;(\Conid{Unid}\;(((\anonymous ,(\Varid{x},\anonymous ))),\Varid{origem}))\mathrel{=}\text{\ttfamily \char34 //~Caixa:~\char34}\plus \Varid{x}\plus \text{\ttfamily \char34 ~\char34}\plus \Varid{show}\;\Varid{origem}\plus \text{\ttfamily \char34 ~|~-~|~\char34}{}\<[E]%
+\\
+\>[B]{}\Varid{pprint}\;(\Conid{Comp}\;\Varid{tipo}\;\Varid{esq}\;\Varid{dir})\mathrel{=}\Varid{pprint}\;\Varid{esq}\plus \Varid{pprint}\;\Varid{dir}{}\<[E]%
+\\
+\>[B]{}\mbox{\commentbegin -
+calcOrigins' :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
+calcOrigins' (Unid caixa, origem) = Unid (caixa, origem)
+calcOrigins' ((Comp tipo esq dir), origem) = (Comp () esq' dir')
+                      where
+                          esq' = calcOrigins' (esq, (fromIntegral a1, fromIntegral b1 ) )
+                          dir' = calcOrigins' (dir, (fromIntegral a2, fromIntegral b2 ) )
+                          (a1,b1) = dimen esq
+                          (a2,b2) = dimen dir- \commentend}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{calcOrigins'}\mathbin{::}((\Conid{X}\;\Conid{Caixa}\;\Conid{Tipo}),\Conid{Origem})\to \Conid{X}\;(\Conid{Caixa},\Conid{Origem})\;(){}\<[E]%
+\\
+\>[B]{}\Varid{calcOrigins'}\;(\Conid{Unid}\;\Varid{caixa},\Varid{origem})\mathrel{=}\Conid{Unid}\;(\Varid{caixa},\Varid{origem}){}\<[E]%
+\\
+\>[B]{}\Varid{calcOrigins'}\;((\Conid{Comp}\;\Varid{tipo}\;\Varid{esq}\;(\Conid{Unid}\;((\Varid{largura},\Varid{altura}),\Varid{x}))),\Varid{origem})\mathrel{=}(\Conid{Comp}\;()\;\Varid{esq'}\;\Varid{dir'}){}\<[E]%
+\\
+\>[B]{}\hsindent{23}{}\<[23]%
+\>[23]{}\mathbf{where}{}\<[E]%
+\\
+\>[23]{}\hsindent{4}{}\<[27]%
+\>[27]{}\Varid{esq'}\mathrel{=}\Varid{calcOrigins'}\;(\Varid{esq},\Varid{origem}){}\<[E]%
+\\
+\>[23]{}\hsindent{4}{}\<[27]%
+\>[27]{}\Varid{dir'}\mathrel{=}\Varid{calcOrigins'}\;((\Conid{Unid}\;((\Varid{largura},\Varid{altura}),\Varid{x})),\Varid{calc}\;\Varid{tipo}\;\Varid{origem}\;(\Varid{fromIntegral}\;\Varid{largura},\Varid{fromIntegral}\;\Varid{altura})){}\<[E]%
+\\
+\>[B]{}\Varid{calcOrigins'}\;((\Conid{Comp}\;\Varid{tipo}\;\Varid{esq}\;\Varid{dir}),\Varid{origem})\mathrel{=}(\Conid{Comp}\;()\;\Varid{esq'}\;\Varid{dir'}){}\<[E]%
+\\
+\>[B]{}\hsindent{23}{}\<[23]%
+\>[23]{}\mathbf{where}{}\<[E]%
+\\
+\>[23]{}\hsindent{4}{}\<[27]%
+\>[27]{}\Varid{esq'}\mathrel{=}\Varid{calcOrigins'}\;(\Varid{esq},\Varid{origem}){}\<[E]%
+\\
+\>[23]{}\hsindent{4}{}\<[27]%
+\>[27]{}\Varid{dir'}\mathrel{=}\Varid{calcOrigins'}\;(\Varid{dir},\Varid{calc}\;\Varid{tipo}\;\Varid{origem}\;(\mathrm{0},\mathrm{0})){}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{calcOrigins}\mathbin{::}((\Conid{X}\;\Conid{Caixa}\;\Conid{Tipo}),\Conid{Origem})\to \Conid{X}\;(\Conid{Caixa},\Conid{Origem})\;(){}\<[E]%
 \\
-\>[B]{}\Varid{calcOrigins}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{calcOrigins}\;(\Conid{Unid}\;\Varid{caixa},\Varid{origem})\mathrel{=}\Conid{Unid}\;(\Varid{caixa},\Varid{origem}){}\<[E]%
+\\
+\>[B]{}\Varid{calcOrigins}\;((\Conid{Comp}\;\Varid{tipo}\;\Varid{esq}\;\Varid{dir}),\Varid{origem})\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{23}{}\<[23]%
+\>[23]{}\mathbf{let}\;\Varid{esq'}\mathrel{=}\Varid{calcOrigins}\;(\Varid{esq},\Varid{origem}){}\<[E]%
+\\
+\>[23]{}\hsindent{4}{}\<[27]%
+\>[27]{}\Varid{dir'}\mathrel{=}\Varid{calcOrigins}\;(\Varid{dir},\Varid{origem}){}\<[E]%
+\\
+\>[B]{}\hsindent{23}{}\<[23]%
+\>[23]{}\mathbf{in}\;(\Conid{Comp}\;()\;\Varid{esq'}\;\Varid{dir'}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment O princípio base é que a origem de um rectangulo corresponde ao seu canto inferior}{}\<[E]%
+\\
+\>[B]{}\mbox{\onelinecomment  esquerdo: a partir disto, dados dois rectangulos (a,b)}{}\<[E]%
+\\
+\>[B]{}\mbox{\onelinecomment  Quanto à função calc: considere duas caixas a) e b). Sabendo a posição absoluta}{}\<[E]%
+\\
+\>[B]{}\mbox{\onelinecomment da caixa a), as suas dimensões, e a posição relativa da caixa b) em relação}{}\<[E]%
+\\
+\>[B]{}\mbox{\onelinecomment à caixa a), a função, calc :: Tipo -> Origem -> (Float, Float) -> Origem,}{}\<[E]%
+\\
+\>[B]{}\mbox{\onelinecomment determina onde colocar a caixa b), i.e. a sua posição absoluta.}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment (Float, Float) deveria ser (Int, Int)}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{calc}\mathbin{::}\Conid{Tipo}\to \Conid{Origem}\to (\Conid{Float},\Conid{Float})\to \Conid{Origem}{}\<[E]%
 \\
-\>[B]{}\Varid{calc}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{calc}\;\Conid{Hb}\;(\Varid{x},\Varid{y})\;(\Varid{largura},\Varid{altura})\mathrel{=}(\Varid{x}\mathbin{+}\Varid{largura},\Varid{y}){}\<[E]%
+\\
+\>[B]{}\Varid{calc}\;\Conid{Ht}\;(\Varid{x},\Varid{y})\;(\Varid{largura},\Varid{altura})\mathrel{=}(\Varid{x}\mathbin{+}\Varid{largura},\Varid{y}\mathbin{+}\Varid{altura}){}\<[E]%
+\\
+\>[B]{}\Varid{calc}\;\Conid{H}\;(\Varid{x},\Varid{y})\;(\Varid{largura},\Varid{altura})\mathrel{=}(\Varid{x}\mathbin{+}\Varid{largura},\Varid{y}\mathbin{+}(\Varid{altura}\mathbin{/}\mathrm{2})){}\<[E]%
+\\
+\>[B]{}\Varid{calc}\;\Conid{Vd}\;(\Varid{x},\Varid{y})\;(\Varid{largura},\Varid{altura})\mathrel{=}(\Varid{x}\mathbin{+}\Varid{largura},\Varid{y}\mathbin{+}\Varid{altura}){}\<[E]%
+\\
+\>[B]{}\Varid{calc}\;\Conid{Ve}\;(\Varid{x},\Varid{y})\;(\Varid{largura},\Varid{altura})\mathrel{=}(\Varid{x},\Varid{y}\mathbin{+}\Varid{altura}){}\<[E]%
+\\
+\>[B]{}\Varid{calc}\;\Conid{V}\;(\Varid{x},\Varid{y})\;(\Varid{largura},\Varid{altura})\mathrel{=}(\Varid{x}\mathbin{+}(\Varid{largura}\mathbin{/}\mathrm{2}),\Varid{y}\mathbin{+}\Varid{altura}){}\<[E]%
 \\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment agrupa as caixas numa lista com as origens e caixas}{}\<[E]%
+\\
+\>[B]{}\Varid{agrup\char95 caixas}\mathbin{::}\Conid{X}\;(\Conid{Caixa},\Conid{Origem})\;()\to \Conid{Fig}{}\<[E]%
+\\
+\>[B]{}\Varid{agrup\char95 caixas}\mathrel{=}\bot {}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment segundo problema}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment mostra_caixas :: (L2D,Origem) -> IO ()--}{}\<[E]%
+\\
+\>[B]{}\Varid{mostra\char95 caixas}\mathrel{=}\bot {}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment auxiliar da função mostra_caixas}{}\<[E]%
+\\
+\>[B]{}\Varid{caixasAndOrigin2Pict}\mathbin{::}(\Conid{X}\;\Conid{Caixa}\;\Conid{Tipo},\Conid{Origem})\to \Conid{\Conid{G}.Picture}{}\<[E]%
+\\
 \>[B]{}\Varid{caixasAndOrigin2Pict}\mathrel{=}\bot {}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
@@ -1870,13 +2341,13 @@ Solução:
 \>[B]{}\Varid{cos'}\;\Varid{x}\mathrel{=}\Varid{prj}\comp \for{\Varid{loop}}\ {\Varid{init}}\;\mathbf{where}{}\<[E]%
 \\
 \>[B]{}\hsindent{4}{}\<[4]%
-\>[4]{}\Varid{loop}\mathrel{=}\bot {}\<[E]%
+\>[4]{}\Varid{loop}\;(\Varid{e},\Varid{h},\Varid{s},\Varid{t})\mathrel{=}(\Varid{e}\mathbin{+}\Varid{h},\Varid{h}\mathbin{*}(\mathbin{-}\Varid{x}\mathbin{\uparrow}\mathrm{2})\mathbin{/}\Varid{s},\Varid{s}\mathbin{+}\Varid{t},\Varid{t}\mathbin{+}\mathrm{8}){}\<[E]%
 \\
 \>[B]{}\hsindent{4}{}\<[4]%
-\>[4]{}\Varid{init}\mathrel{=}\bot {}\<[E]%
+\>[4]{}\Varid{init}\mathrel{=}(\mathrm{1},\mathbin{-}\mathrm{1}\mathbin{/}\mathrm{2}\mathbin{*}(\Varid{x}\mathbin{\uparrow}\mathrm{2}),\mathrm{12},\mathrm{18}){}\<[E]%
 \\
 \>[B]{}\hsindent{4}{}\<[4]%
-\>[4]{}\Varid{prj}\mathrel{=}\bot {}\<[E]%
+\>[4]{}\Varid{prj}\;(\Varid{e},\Varid{h},\Varid{s},\Varid{t})\mathrel{=}\Varid{e}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1884,22 +2355,37 @@ Solução:
 Triologia ``ana-cata-hilo":
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{7}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{outFS}\;(\Conid{FS}\;\Varid{l})\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{outFS}\;(\Conid{FS}\;\Varid{l})\mathrel{=}\map \;\Varid{x}\;\Varid{l}{}\<[E]%
 \\
-\>[B]{}\Varid{outNode}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\hsindent{7}{}\<[7]%
+\>[7]{}\mathbf{where}{}\<[E]%
+\\
+\>[7]{}\hsindent{2}{}\<[9]%
+\>[9]{}\Varid{x}\;(\Varid{a},\Conid{File}\;\Varid{b})\mathrel{=}(\Varid{a},i_1\;\Varid{b}){}\<[E]%
+\\
+\>[7]{}\hsindent{2}{}\<[9]%
+\>[9]{}\Varid{x}\;(\Varid{a},\Conid{Dir}\;\Varid{b})\mathrel{=}(\Varid{a},i_2\;\Varid{b}){}\<[E]%
+\\
+\>[B]{}\mbox{\onelinecomment  x (a, b) = (a, outNode b)}{}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\Varid{baseFS}\;\Varid{f}\;\Varid{g}\;\Varid{h}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{outNode}\;(\Conid{File}\;\Varid{conteudo})\mathrel{=}i_1\;\Varid{conteudo}{}\<[E]%
+\\
+\>[B]{}\Varid{outNode}\;(\Conid{Dir}\;\Varid{b})\mathrel{=}i_2\;\Varid{b}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{baseFS}\;\Varid{f}\;\Varid{g}\;\Varid{h}\mathrel{=}\map \;(\Varid{f}\times(\Varid{g}+\Varid{h})){}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{cataFS}\mathbin{::}([\mskip1.5mu (\Varid{a},\Varid{b}+\Varid{c})\mskip1.5mu]\to \Varid{c})\to \Conid{FS}\;\Varid{a}\;\Varid{b}\to \Varid{c}{}\<[E]%
 \\
-\>[B]{}\Varid{cataFS}\;\Varid{g}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{cataFS}\;\Varid{g}\mathrel{=}\Varid{g}\comp (\Varid{baseFS}\;\Varid{id}\;\Varid{id}\;(\Varid{cataFS}\;\Varid{g}))\comp \Varid{outFS}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{anaFS}\mathbin{::}(\Varid{c}\to [\mskip1.5mu (\Varid{a},\Varid{b}+\Varid{c})\mskip1.5mu])\to \Varid{c}\to \Conid{FS}\;\Varid{a}\;\Varid{b}{}\<[E]%
 \\
-\>[B]{}\Varid{anaFS}\;\Varid{g}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{anaFS}\;\Varid{g}\mathrel{=}\Varid{inFS}\comp (\Varid{baseFS}\;\Varid{id}\;\Varid{id}\;(\Varid{anaFS}\;\Varid{g}))\comp \Varid{g}{}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\Varid{hyloFS}\;\Varid{g}\;\Varid{h}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{hyloFS}\;\Varid{g}\;\Varid{h}\mathrel{=}(\Varid{cataFS}\;\Varid{g})\comp (\Varid{anaFS}\;\Varid{h}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 Outras funções pedidas:

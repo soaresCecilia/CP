@@ -1124,6 +1124,13 @@ outras funções auxiliares que sejam necessárias.
 
 \subsection*{Problema 1}
 
+O problema 1 tem como tema a construção de um programa de compiladores
+com base numa linguagem funcional, recorrendo a cata/ana/hilo-morfismos da
+linguagem em causa.
+
+De modo a resolvê-lo tivemos de definir algumas funções que nos ajudaram
+a implementar as soluções das respetivas alíneas.
+
 \begin{code}
 
 inExpr :: Either Int (Op,(Expr,Expr)) -> Expr
@@ -1142,26 +1149,148 @@ anaExpr g = inExpr . recExpr (anaExpr g) . g
 
 hyloExpr h g = cataExpr h . anaExpr g
 
+\end{code}
+
+Estas funções, nomeadamente |inExpr|, |outExpr|,
+|recExpr|, |cataExpr|, |anaExpr| e |hyloExpr|, podem ser
+deduzidas a partir do Tipo de Dados em questão, com o auxílio dos
+conhecimentos adquiridos na unidade curricular de Cálculo
+de Programas, bem como de alguns diagramas específicos.
+
+\vspace{0.2cm}
+
+Uma vez que uma Expr é um |Num Int| ou |Bop Expr Op Expr|
+sabemos que o |inExpr| e o |outExpr| deverão "construir" ou "desconstruir"
+a Expr, respetivamente, logo, conseguimos representar os diagramas:
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |Expr|
+&
+     |Int + (Op >< (Expr >< Expr))|
+           \ar[l]^-{|inExpr|}
+}
+\end{eqnarray*}
+
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |Expr|
+           \ar[r]_-{|outExpr|}
+&
+     |Int + (Op >< (Expr >< Expr))|
+}
+\end{eqnarray*}
+
+
+
+Assim, conseguimos concluir que as definições das referidas funções são:
+\begin{eqnarray*}
+\start
+|inExpr = either Num bop'|
+      |where bop'(o,(e1, e2)) = Bop e1 o e2|
+\end{eqnarray*}
+\begin{eqnarray*}
+\start
+|outExpr (Num a) = Left(a)|
+\more
+|outExpr (Bop e1 o e2) = Right (o, (e1, e2))|
+\end{eqnarray*}
+
+
+Quanto às restantes funções, |recExpr|, |cataExpr|,
+|anaExpr| e |hyloExpr|, estas foram deduzidas através do diagrama
+que podemos observar infra.
+A título de exemplo, assumimos que as funções |g| e |h| são a função identidade
+
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+   |Expr|
+          \ar[d]_-{|anaExpr g|}
+           \ar[r]^-{|g|}
+&
+   |Int + (Op >< (Expr >< Expr)|
+          \ar[d]^{|recExpr(anaExpr g)|}
+\\
+    |Expr|
+       \ar[d]_-{|cataExpr h|}
+       \ar[r]^-{|outExpr|}
+&
+    |Int + (Op >< (Expr >< Expr)|
+          \ar[l]^-{|inExpr|}
+           \ar[d]^{|recExpr(cataExpr h)|}
+\\
+   |Expr|
+&
+   |Int + (Op >< (Expr >< Expr)|
+       \ar[l]^-{|h|}
+}
+\end{eqnarray*}
+
+Pelo que, definimos cada uma dessas funções como:
+\begin{eqnarray*}
+\start
+|recExpr f = id + (id >< (f >< f))|
+\more
+|cataExpr h = h . (recExpr (cataExpr h)) . outExpr|
+\more
+|anaExpr g = inExpr . (recExpr (anaExpr g) ) . g|
+\more
+|hyloExpr h g = cataExpr h . anaExpr g|
+\end{eqnarray*}
+
+
+Na resolução das questões seguintes deste problema recorremos a alguns diagramas,
+através dos quais retiramos a definição de cada uma das funções que se pede.
+
+
+\begin{enumerate}
+\item Função |calcula|
+
+O objetivo da função |calcula| é calcular o valor de uma expressão, pelo que o
+seu diagrama é:
+
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+    |Expr|
+           \ar[d]_-{|cataExpr g|}
+&
+    |Int + (Op >< (Expr >< Expr)|
+           \ar[d]^{|recExpr (cataExpr g)|}
+           \ar[l]_-{|inExpr|}
+\\
+     |Int|
+&
+     |Int + (Op >< (Int >< Int)|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+
+
+O objetivo é descobrir o gene |g|, para assim termos a definição final com
+algo do género |calcula = cataExpr g|.
+
+Observando a expressão que obtemos após a aplicação do functor |recExpr| e sabendo
+que o resultado final terá de ser o calculo da expressão em causa,
+deduzimos que o |g| terá que ser um ``either'', |g = either id junta|.
+Assim, do lado direito irá devolver o |Int| e do outro tratar |(Op >< (Int >< Int)|,
+consoante a operação aritmética em causa.
+Desta feita, a função |calcula| é:
+
+\begin{code}
 calcula :: Expr -> Int
-calcula (Num a) = a
-calcula (Bop exp1 (Op "+") exp2) = calcula exp1 + calcula exp2
-calcula (Bop exp1 (Op "-") exp2) = calcula exp1 - calcula exp2
-calcula (Bop exp1 (Op "*") exp2) = calcula exp1 * calcula exp2
-calcula (Bop exp1 (Op "/") exp2) = calcula exp1 `div` calcula exp2
-calcula _ = 0
+calcula e = cataExpr (either id junta) e
+        where junta(Op op,(n1,n2)) | op == "+" = n1 + n2
+                                   | op == "-" = n1 - n2
+                                   | op == "*" = n1 * n2
+                                   | op == "/" = n1 `div`n2
+\end{code}
 
--- Demasiado tempo em (quickCheck prop_inv)
-show' :: Expr -> String
-show' (Num a) | a < 0 =  "(" ++ show a ++ ")"
-              | otherwise = show a
-show' (Bop exp1 (Op "+") exp2) = "(" ++ show' exp1 ++ "+" ++ show' exp2 ++ ")"
-show' (Bop exp1 (Op "-") (Num x)) | x < 0 = "(" ++ show' exp1 ++ "+" ++ show (-x) ++ ")"
-                                  | otherwise = "(" ++ show' exp1 ++ "-" ++ show x ++ ")"
-show' (Bop exp1 (Op "-") exp2) = "(" ++ show' exp1 ++ "-" ++ show' exp2 ++ ")"
-show' (Bop exp1 (Op "*") exp2) = "(" ++ show' exp1 ++ "*" ++ show' exp2 ++ ")"
-show' (Bop exp1 (Op "/") exp2) = "(" ++ show' exp1 ++ "/" ++ show' exp2 ++ ")"
-show' _ = "1"
+\item Função |compile|
 
+
+Esta função trata-se efetivamente de um compilador, em que gera código posfixo
+para uma stack. Na verdade, a stack calcula o valor da string.
+
+\begin{code}
 calculation :: String -> String
 calculation "+" = "ADD"
 calculation "*" = "MULT"
@@ -1169,8 +1298,15 @@ calculation "-" = "MINUS"
 calculation "/" = "DIV"
 calculation   _   = "UNDEFINED"
 
+
 compile :: String -> Codigo
-compile [] = []
+compile = cataList (either nil compila)
+  where compila (x, xs) = undefined
+
+
+
+
+{-
 compile bolt = aux2 (fst((readExp bolt)!!0))
                       where
                       aux2 (Num a) = ["PUSH " ++ show a]
@@ -1191,6 +1327,7 @@ opDiv :: Op
 opDiv = Op "/"
 op :: Expr
 op = (Bop num1 (Op "-") num2)
+
 opComplex :: Expr
 opComplex = (Bop (Bop num1 (Op "*") num10) (Op "-") (Num (-1)))
 left :: Either Int (Op,(Expr,Expr))
@@ -1198,8 +1335,22 @@ left = Left 2
 
 right :: Either Int (Op,(Expr,Expr))
 right = Right (Op "3",(Num 10,Num 1))
+-}
+\end{code}
+
+\item Função |show'|
+
+Esta função gera a representação textual de uma |Expr|, sendo o seu retorno
+uma |String|
+
+\begin{code}
+show' :: Expr -> String
+show' = cataExpr (either show expressao)
+      where expressao (Op op, (a,b)) = "(" ++ a ++ " " ++ op ++ " " ++ b ++ ")"
+
 
 \end{code}
+
 
 \subsection*{Problema 2}
 
