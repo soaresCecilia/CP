@@ -1431,7 +1431,43 @@ anaL2D g = inL2D . (recL2D (anaL2D g)) . g
 hyloL2D h g = cataL2D h . anaL2D g
 
 collectLeafs :: X a b -> [a]
-collectLeafs (Unid a) = undefined
+collectLeafs (Unid a) = [a]
+collectLeafs (Comp b x1 x2) = collectLeafs x1 ++ collectLeafs x2
+
+myex1,myex2,myex3,myex4 :: L2D
+
+myex1 = Unid ((100,300),("F",col_green))
+
+myex2 = Comp Ve b1 b2
+        where b1 = Unid ((100,300),("F",col_green))
+              b2 = Unid ((200,300),("H",col_green))
+
+myex3 = Comp Hb (Comp Ve b1 b2) (Comp Ve b3 b4)
+        where b1 = Unid ((100,300),("F",col_green))
+              b2 = Unid ((200,300),("H",col_green))
+              b3 = Unid ((300,300),("E",col_green))
+              b4 = Unid ((400,300),("G",col_green))
+
+myex4 = Comp Hb (Comp Ve b1 b2) (b3)
+        where b1 = Unid ((100,300),("F",col_green))
+              b2 = Unid ((200,300),("H",col_green))
+              b3 = Unid ((300,300),("G",col_green))
+ex3 :: L2D
+ex3 = Comp Hb (Comp Ve bot top) (Comp Ve gbox2 ybox2)
+      where bbox1 = Unid ((100,200),("A",col_blue))
+            bbox2 = Unid ((150,200),("E",col_blue))
+            gbox1 = Unid ((50,50),("B",col_green))
+            gbox2 = Unid ((100,300),("F",col_green))
+            rbox1 = Unid ((300,50),("C",col_green))
+            rbox2 = Unid ((200,100),("G",col_green))
+            wbox1 = Unid ((450,200),("",col_green))
+            ybox1 = Unid ((100,200),("D",col_green))
+            ybox2 = Unid ((100,300),("H",col_green))
+            bot = Comp Hb wbox1 bbox2
+            top = (Comp Ve (Comp Hb bbox1 gbox1) (Comp Hb rbox1 (Comp H ybox1 rbox2)))
+
+-- é o ponto final do LD2, i e, o ponto onde começa a ultima caixa
+--
 
 \end{code}
 
@@ -1459,7 +1495,6 @@ pprint :: X (Caixa, Origem) () -> String
 pprint (Unid (((_,(x,_))), origem)) = "// Caixa: " ++ x ++ " " ++ show origem ++ " | - | "
 pprint (Comp tipo esq dir) = pprint esq ++ pprint dir
 
-
 calcOrigins :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
 calcOrigins (Unid caixa, origem) = Unid (caixa, origem)
 calcOrigins ((Comp tipo esq (Unid ((largura, altura), x))), origem) = (Comp () esq' dir')
@@ -1471,6 +1506,14 @@ calcOrigins ((Comp tipo esq dir), origem) = (Comp () esq' dir')
                           esq' = calcOrigins (esq, origem)
                           dir' = calcOrigins (dir, calc tipo origem (0,0))
 
+--O princípio base é que a origem de um rectangulo corresponde ao seu canto inferior
+-- esquerdo: a partir disto, dados dois rectangulos (a,b)
+-- Quanto à função calc: considere duas caixas a) e b). Sabendo a posição absoluta
+--da caixa a), as suas dimensões, e a posição relativa da caixa b) em relação
+--à caixa a), a função, calc :: Tipo -> Origem -> (Float, Float) -> Origem,
+--determina onde colocar a caixa b), i.e. a sua posição absoluta.
+
+--(Float, Float) deveria ser (Int, Int)
 
 calc :: Tipo -> Origem -> (Float, Float) -> Origem
 calc Hb (x,y) (largura, altura) = (x + largura, y)
@@ -1481,6 +1524,7 @@ calc Ve (x,y) (largura, altura) = (x, y + altura)
 calc V (x,y) (largura, altura) = (x + (largura / 2), y + altura)
 
 
+-- agrupa as caixas numa lista com as origens e caixas
 agrup_caixas :: X (Caixa, Origem) () -> Fig
 agrup_caixas (Unid (caixa, origem)) = [(origem,caixa)]
 agrup_caixas (Comp () esq dir) = agrup_caixas esq ++ agrup_caixas dir
@@ -1491,11 +1535,27 @@ fl = (1.0,1.0)
 sfl :: Float
 sfl = 1.0
 
+--segundo problema
+-- Função display é dada pelo professor
+-- a Funcao caixasAndOrigin2Pict e após isso usa o diplay para apresentar a imagem
+-- em formato gráfico
 mostra_caixas :: (L2D,Origem) -> IO ()
-mostra_caixas (x, y) = undefined
+mostra_caixas = display . caixasAndOrigin2Pict
 
+-- auxiliar da função mostra_caixas
+-- Calcula inicialmente as orignes de cada uma das imagens usando a funcao calcOrigins
+-- De seguida agrupa todas as caixas numa lista de caixas e as suas origens "Fig"
+-- Depois chama-se a função ajudante que coloca todas as caixas e origens numa lista de pictures
+-- usando a Sugestão de utilizar a G.pictures, transforma-se depois a lista retornada pela "ajudante"[Pictures] numa Picture
 caixasAndOrigin2Pict :: (X Caixa Tipo, Origem) -> G.Picture
-caixasAndOrigin2Pict = undefined
+caixasAndOrigin2Pict = G.Pictures . ajudante . agrup_caixas . calcOrigins
+
+-- Funcao que recebe uma lista de caixas com origens
+-- Para cada elemento da lista (Caixa,Origem), usamos a funcao dada "crC"
+ajudante [] = []
+ajudante ((o,((w,h),(t,c))):xs)
+    = crCaixa o (fromIntegral w) (fromIntegral h) t c : ajudante xs
+
 \end{code}
 
 
@@ -1506,9 +1566,8 @@ O objetivo deste problema é implementar o ciclo for que implementa a função |
 usando várias funções mutuamente recursivas. No caso em concreto, utilizamos quatro
 funções recursivas: |e|, |h|, |s| e a |t|, as quais foram derivadas a partir
 da série de Taylor da função cosseno apresentada.
-Assim, com base nas regras e métodos estudados na disciplina e na dita chamada
-|regra da algibeira|, deduzimos a seguinte implementação em Haskell para o problema
-apresentado:
+Assim, com base nas regras e métodos estudados na disciplina, deduzimos a seguinte implementação
+em Haskell:
 
 \vspace{0.2cm}
 
@@ -1603,8 +1662,8 @@ cuja definição, em linguagem Haskell, será implementada como:
 
 \begin{code}
 cos' x = prj . for loop init where
- loop (e, h, s, t) = (e + h, h * ((-1) *  (x * x)) /s, s + t, t + 8)
- init = (1, (-1/2 * (x*x)), 12, 18)
+ loop (e, h, s, t) = (e + h, h * ((-1) *  x^2) /s, s + t, t + 8)
+ init = (1, -1/2 * x^2, 12, 18)
  prj(e, h, s, t) = e
 \end{code}
 
@@ -1722,7 +1781,7 @@ find :: (Eq a) => a -> FS a b -> [Path a]
 find a = cataFS ( concat.map ( ( either (auxFind1 a) (auxFind2 a) ).distr ) )
 
 auxFind1 :: (Eq a) => a -> (a,b) -> [[a]]
-auxFind1 file (a,b) | file == a = singl (singl a)
+auxFind1 x (a,b) | x == a = singl (singl a)
                  | otherwise = nil (nil)
 
 auxFind2 :: (Eq a) => a -> (a,[[a]]) -> [[a]]
@@ -1748,8 +1807,6 @@ auxJoin = undefined
 cFS2Exp :: a -> FS a b -> (Exp () a)
 cFS2Exp = undefined
 \end{code}
-
-\end{enumerate}
 
 %----------------- Fim do anexo com soluções dos alunos ------------------------%
 
