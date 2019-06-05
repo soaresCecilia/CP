@@ -1382,46 +1382,11 @@ cataL2D g = g . (recL2D (cataL2D g)) . outL2D
 
 anaL2D g = inL2D . (recL2D (anaL2D g)) . g
 
-<<<<<<< HEAD
--- o a será uma lista de caixas
+
+hyloL2D h g = cataL2D h . anaL2D g
+
 collectLeafs :: X a b -> [a]
-collectLeafs (Unid a) = [a]
-collectLeafs (Comp b x1 x2) = collectLeafs x1 ++ collectLeafs x2
-
-myex1,myex2,myex3,myex4 :: L2D
-
-myex1 = Unid ((100,300),("F",col_green))
-
-myex2 = Comp Ve b1 b2
-        where b1 = Unid ((100,300),("F",col_green))
-              b2 = Unid ((200,300),("H",col_green))
-
-myex3 = Comp Hb (Comp Ve b1 b2) (Comp Ve b3 b4)
-        where b1 = Unid ((100,300),("F",col_green))
-              b2 = Unid ((200,300),("H",col_green))
-              b3 = Unid ((300,300),("E",col_green))
-              b4 = Unid ((400,300),("G",col_green))
-
-myex4 = Comp Hb (Comp Ve b1 b2) (b3)
-        where b1 = Unid ((100,300),("F",col_green))
-              b2 = Unid ((200,300),("H",col_green))
-              b3 = Unid ((300,300),("G",col_green))
-ex3 :: L2D
-ex3 = Comp Hb (Comp Ve bot top) (Comp Ve gbox2 ybox2)
-      where bbox1 = Unid ((100,200),("A",col_blue))
-            bbox2 = Unid ((150,200),("E",col_blue))
-            gbox1 = Unid ((50,50),("B",col_green))
-            gbox2 = Unid ((100,300),("F",col_green))
-            rbox1 = Unid ((300,50),("C",col_green))
-            rbox2 = Unid ((200,100),("G",col_green))
-            wbox1 = Unid ((450,200),("",col_green))
-            ybox1 = Unid ((100,200),("D",col_green))
-            ybox2 = Unid ((100,300),("H",col_green))
-            bot = Comp Hb wbox1 bbox2
-            top = (Comp Ve (Comp Hb bbox1 gbox1) (Comp Hb rbox1 (Comp H ybox1 rbox2)))
-
--- é o ponto final do LD2, i e, o ponto onde começa a ultima caixa
---
+collectLeafs (Unid a) = undefined
 
 v :: Int -> Int -> Int
 v l1 l2 | l1 >= l2 = l1
@@ -1445,42 +1410,19 @@ cai_ex2 = (myex2,(0,0))
 pprint :: X (Caixa, Origem) () -> String
 pprint (Unid (((_,(x,_))), origem)) = "// Caixa: " ++ x ++ " " ++ show origem ++ " | - | "
 pprint (Comp tipo esq dir) = pprint esq ++ pprint dir
-{-
-calcOrigins' :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
-calcOrigins' (Unid caixa, origem) = Unid (caixa, origem)
-calcOrigins' ((Comp tipo esq dir), origem) = (Comp () esq' dir')
-                      where
-                          esq' = calcOrigins' (esq, (fromIntegral a1, fromIntegral b1 ) )
-                          dir' = calcOrigins' (dir, (fromIntegral a2, fromIntegral b2 ) )
-                          (a1,b1) = dimen esq
-                          (a2,b2) = dimen dir
--}
-calcOrigins' :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
-calcOrigins' (Unid caixa, origem) = Unid (caixa, origem)
-calcOrigins' ((Comp tipo esq (Unid ((largura, altura), x))), origem) = (Comp () esq' dir')
+
+
+calcOrigins :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
+calcOrigins (Unid caixa, origem) = Unid (caixa, origem)
+calcOrigins ((Comp tipo esq (Unid ((largura, altura), x))), origem) = (Comp () esq' dir')
                       where
                           esq' = calcOrigins' (esq, origem)
                           dir' = calcOrigins' ((Unid ((largura, altura), x)), calc tipo origem (fromIntegral largura, fromIntegral altura))
-calcOrigins' ((Comp tipo esq dir), origem) = (Comp () esq' dir')
+calcOrigins ((Comp tipo esq dir), origem) = (Comp () esq' dir')
                       where
                           esq' = calcOrigins' (esq, origem)
                           dir' = calcOrigins' (dir, calc tipo origem (0,0))
 
-calcOrigins :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
-calcOrigins (Unid caixa, origem) = Unid (caixa, origem)
-calcOrigins ((Comp tipo esq dir), origem) =
-                      let esq' = calcOrigins (esq, origem)
-                          dir' = calcOrigins (dir, origem)
-                      in (Comp () esq' dir')
-
---O princípio base é que a origem de um rectangulo corresponde ao seu canto inferior
--- esquerdo: a partir disto, dados dois rectangulos (a,b)
--- Quanto à função calc: considere duas caixas a) e b). Sabendo a posição absoluta
---da caixa a), as suas dimensões, e a posição relativa da caixa b) em relação
---à caixa a), a função, calc :: Tipo -> Origem -> (Float, Float) -> Origem,
---determina onde colocar a caixa b), i.e. a sua posição absoluta.
-
---(Float, Float) deveria ser (Int, Int)
 
 calc :: Tipo -> Origem -> (Float, Float) -> Origem
 calc Hb (x,y) (largura, altura) = (x + largura, y)
@@ -1491,7 +1433,6 @@ calc Ve (x,y) (largura, altura) = (x, y + altura)
 calc V (x,y) (largura, altura) = (x + (largura / 2), y + altura)
 
 
---agrupa as caixas numa lista com as origens e caixas
 agrup_caixas :: X (Caixa, Origem) () -> Fig
 agrup_caixas = undefined
 
@@ -1502,19 +1443,11 @@ fl = (1.0,1.0)
 sfl :: Float
 sfl = 1.0
 
---segundo problema
-
 mostra_caixas :: (L2D,Origem) -> IO ()
-mostra_caixas (x, y) =
-       do return ()
+mostra_caixas (x, y) = undefined
 
---auxiliar da função mostra_caixas
 caixasAndOrigin2Pict :: (X Caixa Tipo, Origem) -> G.Picture
 caixasAndOrigin2Pict = undefined
-=======
-hyloL2D h g = cataL2D h . anaL2D g
->>>>>>> c2da39d43008876a9215c0c1f2b1794fa59709d3
-
 \end{code}
 
 De facto, são as corretas composições destas funções que permitem resolver
@@ -1552,8 +1485,9 @@ O objetivo deste problema é implementar o ciclo for que implementa a função |
 usando várias funções mutuamente recursivas. No caso em concreto, utilizamos quatro
 funções recursivas: |e|, |h|, |s| e a |t|, as quais foram derivadas a partir
 da série de Taylor da função cosseno apresentada.
-Assim, com base nas regras e métodos estudados na disciplina, deduzimos a seguinte implementação
-em Haskell:
+Assim, com base nas regras e métodos estudados na disciplina e na dita chamada
+|regra da algibeira|, deduzimos a seguinte implementação em Haskell para o problema
+apresentado:
 
 \vspace{0.2cm}
 
@@ -1562,18 +1496,111 @@ cos' x = prj . for loop init where \par
  init = (1, -1/2 * $ x^{2}$, 12, 18) \par
  prj(e, h, s, t) = e
 
-\begin{code}
+\vspace{0.2cm}
+A forma como encontramos estas funções foi calculando, a partir da função |cos x n| derivamos
+as quatro funções que se seguem.
+
+\begin{eqnarray*}
+	e\ x 0 = \sum_{n=0}^{0} \frac{(-1)^0}{(2*0)!} x^{2*0}
+\end{eqnarray*}
+
+
+\begin{eqnarray*}
+	e\ x (n+1)= \sum_{n=0}^\infty \frac{(-1)^n}{(2n)!} x^{2n} + \frac{(-1)^{(n+1)}}{(2(n+1))!} * x^{2(n+1)}
+\end{eqnarray*}
+
+Se definirmos h x n como
+
+\begin{eqnarray*}
+h x n =  x^{2(n+1)} * \frac{(-1)^{(n+1)}}{(2(n+1))!}
+\end{eqnarray*}
+
+temos |e x| e |h x| em recursividade mútua,
+
+\begin{eqnarray*}
+  h\ x 0 = \frac{-1}{2} * x^{2}
+\end{eqnarray*}
+
+\begin{eqnarray*}
+  h\ x (n+1) = h x n * \frac{(-1)*x^{2}}{((2n+3) * (2n+4)}
+\end{eqnarray*}
+
+Aplicando o mesmo raciocínio e definindo |s n| como
+
+\begin{eqnarray*}
+  s\ n = (2n+3) * (2n+4)
+\end{eqnarray*}
+
+temos três funções em recursividade mútua, sendo que
+
+\begin{eqnarray*}
+\start
+  |s 0 = 12|
+\more
+  |s (n+1) = s n + 8n + 18|
+\end{eqnarray*}
+
+Finalmente, se fixarmos que
+
+\begin{eqnarray*}
+  t\ n = 8n + 18
+\end{eqnarray*}
+
+então,
+
+\begin{eqnarray*}
+\start
+  t\ 0 = 18
+\more
+  t\ (n+1) = t n + 18
+\end{eqnarray*}
+
+
+Daqui resulta que obtemos as seguintes quatro funções recursivas:
+\begin{spec}
+e 0 = 1
+e(n+1) =  + h n
+\end{spec}
+
+\begin{spec}
+h 0 = -1/2 * (x * x)
+h (n+1) =  + s n
+\end{spec}
+
+\begin{spec}
+s 0 = 12
+s (n+1) = s n + 8n + 18
+\end{spec}
+
+\begin{spec}
+t 0 = 18
+t(n+1) = t n + 8
+\end{spec}
+
+
+Utilizamos esta versão da função |cos' x| para efeitos de compilação.
+\begin{spec}
 cos' x = prj . for loop init where
- loop (e, h, s, t) = (e + h, h * ((-1) *  x^2) /s, s + t, t + 8)
- init = (1, -1/2 * x^2, 12, 18)
+ loop (e, h, s, t) = (e + h, h * ((-1) *  (x * x)) /s, s + t, t + 8)
+ init = (1, (-1/2 * (x*x)), 12, 18)
  prj(e, h, s, t) = e
-\end{code}
+\end{spec}
 
 
 
 
 \subsection*{Problema 4}
 Triologia ``ana-cata-hilo":
+
+O último problema prende-se com o desenvolvimento de uma biblioteca de funções
+que manipula ficheiros.
+
+\begin{enumerate}
+
+\item Definição das funções |outFS|, |baseFS|, |cataFS|, |anaFS| e |hyloFS|
+
+Para definirmos estas funções começamos por analisar o tipo de dados |FS a b|
+e |Node a b|, sendo que cada um dos tipos de dados depende do outro, pelo 
 
 \begin{code}
 
@@ -1618,23 +1645,7 @@ anaFS g = inFS . (baseFS id id (anaFS g)) . g
 
 Outras funções pedidas:
 \begin{code}
-<<<<<<< HEAD
-tfs = FS [("f1", File "Ola"),
-          ("f2", File "Repetido"),
-          ("d1", Dir (FS [("f2", File "Ole"),
-                          ("f3", File "Ole")
-                         ]))
-         ]
-tfs2 = FS [("d9",Dir (FS [("f2", File "Ole"),
-                          ("f1", File "Ole"),
-                          ("f3", File "Ole"),
-                          ("f4", File "Ole"),
-                          ("f5", File "Ole"),
-                          ("f9", File "Ole")
-                         ]))
-          ]
-=======
->>>>>>> c2da39d43008876a9215c0c1f2b1794fa59709d3
+
 
 check :: (Eq a) => FS a b -> Bool
 check (FS [])                     = True
@@ -1690,6 +1701,8 @@ auxJoin = undefined
 cFS2Exp :: a -> FS a b -> (Exp () a)
 cFS2Exp = undefined
 \end{code}
+
+\end{enumerate}
 
 %----------------- Fim do anexo com soluções dos alunos ------------------------%
 
