@@ -1199,7 +1199,6 @@ Assim, conseguimos concluir que as definições das referidas funções são:
 Quanto às restantes funções, |recExpr|, |cataExpr|,
 |anaExpr| e |hyloExpr|, estas foram deduzidas através do diagrama
 que podemos observar infra.
-A título de exemplo, assumimos que as funções |g| e |h| são a função identidade
 
 \begin{eqnarray*}
 \xymatrix@@C=3cm{
@@ -1260,7 +1259,7 @@ seu diagrama é:
      |Int|
 &
      |Int + (Op >< (Int >< Int)|
-           \ar[l]^-{|g|}
+           \ar[l]^-{|either id nil|}
 }
 \end{eqnarray*}
 
@@ -1287,8 +1286,16 @@ calcula e = cataExpr (either id junta) e
 \item Função |compile|
 
 
-Esta função trata-se efetivamente de um compilador, em que gera código posfixo
-para uma stack. Na verdade, a stack calcula o valor da string.
+Esta função trata-se efetivamente de um compilador, em que é gerado código posfixo
+para uma stack. Na verdade, a stack calcula o valor da string, devolvendo a lista
+de todas as operações que são feitas e a quais algaritmos por uma ordem posfixa.
+Para podermos definir esta função como um catamorfismo de |Expr| tivemos de transformar
+a |String| que nos foi passada como parâmetro para a função |compile| numa
+|Expr|. Para isso, socorremo-nos da função |readExp| fornecida no Anexo C para
+de forma a obtermos uma |Expr| a partir de uma String dada.
+Ademais, criamos uma função auliar de nome |calculation| em que transformamos
+todas as possíveis operações aritméticas em listas de |Strings|, conforme podemos
+verificar infra.
 
 \begin{code}
 calculation :: String -> Codigo
@@ -1297,23 +1304,35 @@ calculation "*" = ["MULT"]
 calculation "-" = ["MINUS"]
 calculation "/" = ["DIV"]
 
+\end{code}
+
+Finalmente, passamos a construir a nossa função compile enquanto um catamorfismo de |Expr|,
+em que o mesmo é aplicado à função |g|, definida como |either inteiro op| após a referida transformação
+de tipos. Por um lado, |inteiro| ``faz um push de um número'',
+por exemplo,|["PUSH 4"]|, para stack, por outro lado, o |op| ``empurra'' para a
+stack a operação aritmética correspondente.
+Face ao exposto, a nossa função compile definida como um catamorfismo de |Expr|
+fica desta forma:
+
+\begin{code}
 
 compile :: String -> Codigo
 compile = cataExpr (either inteiro op) . strings
   where strings = fst . head . readExp
         inteiro x = ["PUSH" ++ show x]
         op (Op x,(y,z)) = y ++ z ++ (calculation x)
-
-
 \end{code}
+
 
 \item Função |show'|
 
-Esta função gera a representação textual de uma |Expr|, sendo o seu retorno
-uma |String|. Para definir esta função definimo-la como um catamorfismo, em que
-a função gene é definida como um `either'', |g = either show expressao|, em que a
-|expressao| é definida como |expressao (Op op, (a,b)) = "(" ++ a ++ " " ++ op ++ " " ++ b ++ ")"|
-Desta feita, a nossa função |show'| é:
+Esta função gera a representação textual de uma |Expr| sem a definição dos seus tipos,
+sendo o seu retorno uma |String|. Para definir esta função definimo-la
+como um catamorfismo, em que a função gene é definida como um `either'',
+|g = either show expressao|, ou seja, caso a |Expr| seja um |Num|, aplicamos
+somente a função |show|, caso seja um |Bop| transformamo-la numa expressão aritmética,
+conforme se demonstra de seguida.
+Desta feita, a nossa função |show'| fica assim definida:
 
 \begin{code}
 show' :: Expr -> String
@@ -1322,7 +1341,7 @@ show' = cataExpr (either show expressao)
 
 \end{code}
 
-Com efeito, analisando o diagrama do catamorfismo acima indicado fica:
+Face ao exposto, o diagrama do catamorfismo acima indicado é representado por:
 
 \begin{eqnarray*}
 \xymatrix@@C=2cm{
@@ -1336,12 +1355,17 @@ Com efeito, analisando o diagrama do catamorfismo acima indicado fica:
      |Int|
 &
      |Int + (Op >< (Int >< Int)|
-           \ar[l]^-{|g|}
+           \ar[l]^-{|either show expressao|}
 }
 \end{eqnarray*}
 
+\end{enumerate}
 
 \subsection*{Problema 2}
+
+Para a resolução do nosso problema 2 como cata/ana/hilo-morfismos aprendidos na
+disciplina de Cálculo de Programas, definimos as funções |inL2D|, |outL2D|, |recL2D|,
+|cataL2D|, |anaL2D| e |hyloL2D|.
 
 \begin{code}
 inL2D :: Either a (b, (X a b,X a b)) -> X a b
@@ -1358,152 +1382,74 @@ cataL2D g = g . (recL2D (cataL2D g)) . outL2D
 
 anaL2D g = inL2D . (recL2D (anaL2D g)) . g
 
--- o a será uma lista de caixas
-collectLeafs :: X a b -> [a]
-collectLeafs (Unid a) = [a]
-collectLeafs (Comp b x1 x2) = collectLeafs x1 ++ collectLeafs x2
-
-myex1,myex2,myex3,myex4 :: L2D
-
-myex1 = Unid ((100,300),("F",col_green))
-
-myex2 = Comp Ve b1 b2
-        where b1 = Unid ((100,300),("F",col_green))
-              b2 = Unid ((200,300),("H",col_green))
-
-myex3 = Comp Hb (Comp Ve b1 b2) (Comp Ve b3 b4)
-        where b1 = Unid ((100,300),("F",col_green))
-              b2 = Unid ((200,300),("H",col_green))
-              b3 = Unid ((300,300),("E",col_green))
-              b4 = Unid ((400,300),("G",col_green))
-
-myex4 = Comp Hb (Comp Ve b1 b2) (b3)
-        where b1 = Unid ((100,300),("F",col_green))
-              b2 = Unid ((200,300),("H",col_green))
-              b3 = Unid ((300,300),("G",col_green))
-ex3 :: L2D
-ex3 = Comp Hb (Comp Ve bot top) (Comp Ve gbox2 ybox2)
-      where bbox1 = Unid ((100,200),("A",col_blue))
-            bbox2 = Unid ((150,200),("E",col_blue))
-            gbox1 = Unid ((50,50),("B",col_green))
-            gbox2 = Unid ((100,300),("F",col_green))
-            rbox1 = Unid ((300,50),("C",col_green))
-            rbox2 = Unid ((200,100),("G",col_green))
-            wbox1 = Unid ((450,200),("",col_green))
-            ybox1 = Unid ((100,200),("D",col_green))
-            ybox2 = Unid ((100,300),("H",col_green))
-            bot = Comp Hb wbox1 bbox2
-            top = (Comp Ve (Comp Hb bbox1 gbox1) (Comp Hb rbox1 (Comp H ybox1 rbox2)))
-
--- é o ponto final do LD2, i e, o ponto onde começa a ultima caixa
---
-
-v :: Int -> Int -> Int
-v l1 l2 | l1 >= l2 = l1
-        | otherwise = l1 + (l2 `div` 2)
-
-calcAux :: Tipo -> (Int, Int) -> (Int, Int) -> (Int, Int)
-calcAux V (l1, a1) (l2,a2) = (v l1 l2 , a1 + a2)
-calcAux Vd (l1, a1) (l2,a2) = (max l1 l2, a1 + a2)
-calcAux Ve (l1, a1) (l2,a2) = (max l1 l2, a1 + a2)
-calcAux Hb (l1, a1) (l2,a2) = (l1 + l2, max a1 a2)
-calcAux Ht (l1, a1) (l2,a2) = (l1 + l2, a1 + a2)
-calcAux H (l1, a1) (l2,a2) = (l1 + l2, v a1 a2)
-
-dimen :: X Caixa Tipo -> (Int, Int)
-dimen (Unid ((largura, altura), _)) = (largura,altura)
-dimen (Comp tipo esq dir) = calcAux tipo (dimen esq) (dimen dir)
-
-cai_ex2 :: ((X Caixa Tipo), Origem)
-cai_ex2 = (myex2,(0,0))
-
-pprint :: X (Caixa, Origem) () -> String
-pprint (Unid (((_,(x,_))), origem)) = "// Caixa: " ++ x ++ " " ++ show origem ++ " | - | "
-pprint (Comp tipo esq dir) = pprint esq ++ pprint dir
-{--
-calcOrigins' :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
-calcOrigins' (Unid caixa, origem) = Unid (caixa, origem)
-calcOrigins' ((Comp tipo esq dir), origem) = (Comp () esq' dir')
-                      where
-                          esq' = calcOrigins' (esq, (fromIntegral a1, fromIntegral b1 ) )
-                          dir' = calcOrigins' (dir, (fromIntegral a2, fromIntegral b2 ) )
-                          (a1,b1) = dimen esq
-                          (a2,b2) = dimen dir--}
-calcOrigins' :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
-calcOrigins' (Unid caixa, origem) = Unid (caixa, origem)
-calcOrigins' ((Comp tipo esq (Unid ((largura, altura), x))), origem) = (Comp () esq' dir')
-                      where
-                          esq' = calcOrigins' (esq, origem)
-                          dir' = calcOrigins' ((Unid ((largura, altura), x)), calc tipo origem (fromIntegral largura, fromIntegral altura))
-calcOrigins' ((Comp tipo esq dir), origem) = (Comp () esq' dir')
-                      where
-                          esq' = calcOrigins' (esq, origem)
-                          dir' = calcOrigins' (dir, calc tipo origem (0,0))
-
-calcOrigins :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
-calcOrigins (Unid caixa, origem) = Unid (caixa, origem)
-calcOrigins ((Comp tipo esq dir), origem) =
-                      let esq' = calcOrigins (esq, origem)
-                          dir' = calcOrigins (dir, origem)
-                      in (Comp () esq' dir')
-
---O princípio base é que a origem de um rectangulo corresponde ao seu canto inferior
--- esquerdo: a partir disto, dados dois rectangulos (a,b)
--- Quanto à função calc: considere duas caixas a) e b). Sabendo a posição absoluta
---da caixa a), as suas dimensões, e a posição relativa da caixa b) em relação
---à caixa a), a função, calc :: Tipo -> Origem -> (Float, Float) -> Origem,
---determina onde colocar a caixa b), i.e. a sua posição absoluta.
-
---(Float, Float) deveria ser (Int, Int)
-
-calc :: Tipo -> Origem -> (Float, Float) -> Origem
-calc Hb (x,y) (largura, altura) = (x + largura, y)
-calc Ht (x,y) (largura, altura) = (x + largura, y + altura)
-calc H (x,y) (largura, altura) = (x + largura, y + (altura / 2))
-calc Vd (x,y) (largura, altura) = (x + largura, y + altura)
-calc Ve (x,y) (largura, altura) = (x, y + altura)
-calc V (x,y) (largura, altura) = (x + (largura / 2), y + altura)
-
-
---agrupa as caixas numa lista com as origens e caixas
-agrup_caixas :: X (Caixa, Origem) () -> Fig
-agrup_caixas = undefined
-
-
-
-
---segundo problema
-
---mostra_caixas :: (L2D,Origem) -> IO ()--
-mostra_caixas = undefined
-
---auxiliar da função mostra_caixas
-caixasAndOrigin2Pict :: (X Caixa Tipo, Origem) -> G.Picture
-caixasAndOrigin2Pict = undefined
+hyloL2D h g = cataL2D h . anaL2D g
 
 \end{code}
+
+De facto, são as corretas composições destas funções que permitem resolver
+este problema como um cata, ana ou hilomorfismo.
+Com efeito, o diagrama genérico destes três sistemas de composição de funções é:
+
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+   |L2D|
+          \ar[d]_-{|anaL2D g|}
+           \ar[r]^-{|g|}
+&
+   |Unid + b >< (L2D >< L2D)|
+          \ar[d]^{|recL2D(anaL2D g)|}
+\\
+    |LD2|
+       \ar[d]_-{|cataL2D h|}
+       \ar[r]^-{|outL2D|}
+&
+    |Unid + b >< (L2D >< L2D)|
+          \ar[l]^-{|inL2D|}
+           \ar[d]^{|recL2D(cataL2D h)|}
+\\
+   |L2D|
+&
+   |Unid + b >< (L2D >< L2D)|
+       \ar[l]^-{|h|}
+}
+\end{eqnarray*}
+
 
 \subsection*{Problema 3}
-Solução:
+
+O objetivo deste problema é implementar o ciclo for que implementa a função |cos' x n|
+usando várias funções mutuamente recursivas. No caso em concreto, utilizamos quatro
+funções recursivas: |e|, |h|, |s| e a |t|, as quais foram derivadas a partir
+da série de Taylor da função cosseno apresentada.
+Assim, com base nas regras e métodos estudados na disciplina, deduzimos a seguinte implementação
+em Haskell:
+
+\vspace{0.2cm}
+
+cos' x = prj . for loop init where \par
+ loop (e, h, s, t) = (e + h, h * ((-1) * $ x^{2}$) /s, s + t, t + 8) \par
+ init = (1, -1/2 * $ x^{2}$, 12, 18) \par
+ prj(e, h, s, t) = e
+
 \begin{code}
-
 cos' x = prj . for loop init where
-   loop (e, h, s, t) = (e + h, h * (-x^2)/s, s + t, t + 8)
-   init = (1, -1/2 * (x^2), 12, 18)
-   prj(e, h, s, t) = e
-
+ loop (e, h, s, t) = (e + h, h * ((-1) *  x^2) /s, s + t, t + 8)
+ init = (1, -1/2 * x^2, 12, 18)
+ prj(e, h, s, t) = e
 \end{code}
+
+
+
 
 \subsection*{Problema 4}
 Triologia ``ana-cata-hilo":
-\begin{code}
 
+\begin{code}
 
 outFS (FS l) = map x l
       where
         x (a, File b) = (a, Left b)
         x (a, Dir b) = (a, Right b)
--- x (a, b) = (a, outNode b)
 
 outNode (File conteudo) = Left conteudo
 outNode(Dir b) = Right b
@@ -1516,11 +1462,32 @@ cataFS g = g . (baseFS id id (cataFS g)) . outFS
 anaFS :: (c -> [(a, Either b c)]) -> c -> FS a b
 anaFS g = inFS . (baseFS id id (anaFS g)) . g
 
-hyloFS g h = (cataFS g) . (anaFS h)
-
 \end{code}
+
+
+
+
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+    |FS|
+           \ar[d]_-{|cataFS g|}
+&
+    |[(A >< (B + FS a b))]|
+           \ar[d]^{|baseFS id id (g)|}
+            \ar[l]_-{|inFS|}
+\\
+     |C|
+&
+     |[(A >< (B + Bool))]|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+
+
+
 Outras funções pedidas:
 \begin{code}
+
 check :: (Eq a) => FS a b -> Bool
 check = undefined
 
