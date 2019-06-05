@@ -1199,7 +1199,6 @@ Assim, conseguimos concluir que as definições das referidas funções são:
 Quanto às restantes funções, |recExpr|, |cataExpr|,
 |anaExpr| e |hyloExpr|, estas foram deduzidas através do diagrama
 que podemos observar infra.
-A título de exemplo, assumimos que as funções |g| e |h| são a função identidade
 
 \begin{eqnarray*}
 \xymatrix@@C=3cm{
@@ -1251,16 +1250,16 @@ seu diagrama é:
 \begin{eqnarray*}
 \xymatrix@@C=2cm{
     |Expr|
-           \ar[d]_-{|cataExpr g|}
+           \ar[d]_-{|calcula|}
 &
     |Int + (Op >< (Expr >< Expr)|
-           \ar[d]^{|recExpr (cataExpr g)|}
+           \ar[d]^{|recExpr (calcula)|}
            \ar[l]_-{|inExpr|}
 \\
      |Int|
 &
      |Int + (Op >< (Int >< Int)|
-           \ar[l]^-{|g|}
+           \ar[l]^-{|either id nil|}
 }
 \end{eqnarray*}
 
@@ -1287,8 +1286,16 @@ calcula e = cataExpr (either id junta) e
 \item Função |compile|
 
 
-Esta função trata-se efetivamente de um compilador, em que gera código posfixo
-para uma stack. Na verdade, a stack calcula o valor da string.
+Esta função trata-se efetivamente de um compilador, em que é gerado código posfixo
+para uma stack. Na verdade, a stack calcula o valor da string, devolvendo a lista
+de todas as operações que são feitas e a quais algaritmos por uma ordem posfixa.
+Para podermos definir esta função como um catamorfismo de |Expr| tivemos de transformar
+a |String| que nos foi passada como parâmetro para a função |compile| numa
+|Expr|. Para isso, socorremo-nos da função |readExp| fornecida no Anexo C para
+de forma a obtermos uma |Expr| a partir de uma String dada.
+Ademais, criamos uma função auliar de nome |calculation| em que transformamos
+todas as possíveis operações aritméticas em listas de |Strings|, conforme podemos
+verificar infra.
 
 \begin{code}
 calculation :: String -> Codigo
@@ -1297,31 +1304,68 @@ calculation "*" = ["MULT"]
 calculation "-" = ["MINUS"]
 calculation "/" = ["DIV"]
 
+\end{code}
+
+Finalmente, passamos a construir a nossa função compile enquanto um catamorfismo de |Expr|,
+em que o mesmo é aplicado à função |g|, definida como |either inteiro op| após a referida transformação
+de tipos. Por um lado, |inteiro| ``faz um push de um número'',
+por exemplo,|["PUSH 4"]|, para stack, por outro lado, o |op| ``empurra'' para a
+stack a operação aritmética correspondente.
+Face ao exposto, a nossa função compile definida como um catamorfismo de |Expr|
+fica desta forma:
+
+\begin{code}
 
 compile :: String -> Codigo
 compile = cataExpr (either inteiro op) . strings
   where strings = fst . head . readExp
         inteiro x = ["PUSH" ++ show x]
         op (Op x,(y,z)) = y ++ z ++ (calculation x)
-
-
 \end{code}
+
 
 \item Função |show'|
 
-Esta função gera a representação textual de uma |Expr|, sendo o seu retorno
-uma |String|
+Esta função gera a representação textual de uma |Expr| sem a definição dos seus tipos,
+sendo o seu retorno uma |String|. Para definir esta função definimo-la
+como um catamorfismo, em que a função gene é definida como um `either'',
+|g = either show expressao|, ou seja, caso a |Expr| seja um |Num|, aplicamos
+somente a função |show|, caso seja um |Bop| transformamo-la numa expressão aritmética,
+conforme se demonstra de seguida.
+Desta feita, a nossa função |show'| fica assim definida:
 
 \begin{code}
 show' :: Expr -> String
 show' = cataExpr (either show expressao)
       where expressao (Op op, (a,b)) = "(" ++ a ++ " " ++ op ++ " " ++ b ++ ")"
 
-
 \end{code}
 
+Face ao exposto, o diagrama do catamorfismo acima indicado é representado por:
+
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+    |Expr|
+           \ar[d]_-{|show'|}
+&
+    |Int + (Op >< (Expr >< Expr)|
+           \ar[d]^{|recExpr (show')|}
+           \ar[l]_-{|inExpr|}
+\\
+     |Int|
+&
+     |Int + (Op >< (Int >< Int)|
+           \ar[l]^-{|either show expressao|}
+}
+\end{eqnarray*}
+
+\end{enumerate}
 
 \subsection*{Problema 2}
+
+Para a resolução do nosso problema 2 como cata/ana/hilo-morfismos aprendidos na
+disciplina de Cálculo de Programas, definimos as funções |inL2D|, |outL2D|, |recL2D|,
+|cataL2D|, |anaL2D| e |hyloL2D|.
 
 \begin{code}
 inL2D :: Either a (b, (X a b,X a b)) -> X a b
@@ -1338,6 +1382,7 @@ cataL2D g = g . (recL2D (cataL2D g)) . outL2D
 
 anaL2D g = inL2D . (recL2D (anaL2D g)) . g
 
+<<<<<<< HEAD
 -- o a será uma lista de caixas
 collectLeafs :: X a b -> [a]
 collectLeafs (Unid a) = [a]
@@ -1466,30 +1511,76 @@ mostra_caixas (x, y) =
 --auxiliar da função mostra_caixas
 caixasAndOrigin2Pict :: (X Caixa Tipo, Origem) -> G.Picture
 caixasAndOrigin2Pict = undefined
+=======
+hyloL2D h g = cataL2D h . anaL2D g
+>>>>>>> c2da39d43008876a9215c0c1f2b1794fa59709d3
 
 \end{code}
+
+De facto, são as corretas composições destas funções que permitem resolver
+este problema como um cata, ana ou hilomorfismo.
+Com efeito, o diagrama genérico destes três sistemas de composição de funções é:
+
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+   |L2D|
+          \ar[d]_-{|anaL2D g|}
+           \ar[r]^-{|g|}
+&
+   |Unid + b >< (L2D >< L2D)|
+          \ar[d]^{|recL2D(anaL2D g)|}
+\\
+    |LD2|
+       \ar[d]_-{|cataL2D h|}
+       \ar[r]^-{|outL2D|}
+&
+    |Unid + b >< (L2D >< L2D)|
+          \ar[l]^-{|inL2D|}
+           \ar[d]^{|recL2D(cataL2D h)|}
+\\
+   |L2D|
+&
+   |Unid + b >< (L2D >< L2D)|
+       \ar[l]^-{|h|}
+}
+\end{eqnarray*}
+
 
 \subsection*{Problema 3}
-Solução:
+
+O objetivo deste problema é implementar o ciclo for que implementa a função |cos' x n|
+usando várias funções mutuamente recursivas. No caso em concreto, utilizamos quatro
+funções recursivas: |e|, |h|, |s| e a |t|, as quais foram derivadas a partir
+da série de Taylor da função cosseno apresentada.
+Assim, com base nas regras e métodos estudados na disciplina, deduzimos a seguinte implementação
+em Haskell:
+
+\vspace{0.2cm}
+
+cos' x = prj . for loop init where \par
+ loop (e, h, s, t) = (e + h, h * ((-1) * $ x^{2}$) /s, s + t, t + 8) \par
+ init = (1, -1/2 * $ x^{2}$, 12, 18) \par
+ prj(e, h, s, t) = e
+
 \begin{code}
-
 cos' x = prj . for loop init where
-   loop (e, h, s, t) = (e + h, h * (-x^2)/s, s + t, t + 8)
-   init = (1, -1/2 * (x^2), 12, 18)
-   prj(e, h, s, t) = e
-
+ loop (e, h, s, t) = (e + h, h * ((-1) *  x^2) /s, s + t, t + 8)
+ init = (1, -1/2 * x^2, 12, 18)
+ prj(e, h, s, t) = e
 \end{code}
+
+
+
 
 \subsection*{Problema 4}
 Triologia ``ana-cata-hilo":
-\begin{code}
 
+\begin{code}
 
 outFS (FS l) = map x l
       where
         x (a, File b) = (a, Left b)
         x (a, Dir b) = (a, Right b)
--- x (a, b) = (a, outNode b)
 
 outNode (File conteudo) = Left conteudo
 outNode(Dir b) = Right b
@@ -1502,11 +1593,32 @@ cataFS g = g . (baseFS id id (cataFS g)) . outFS
 anaFS :: (c -> [(a, Either b c)]) -> c -> FS a b
 anaFS g = inFS . (baseFS id id (anaFS g)) . g
 
-hyloFS g h = (cataFS g) . (anaFS h)
-
 \end{code}
+
+
+
+
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+    |FS|
+           \ar[d]_-{|cataFS g|}
+&
+    |[(A >< (B + FS a b))]|
+           \ar[d]^{|baseFS id id (g)|}
+            \ar[l]_-{|inFS|}
+\\
+     |C|
+&
+     |[(A >< (B + Bool))]|
+           \ar[l]^-{|g|}
+}
+\end{eqnarray*}
+
+
+
 Outras funções pedidas:
 \begin{code}
+<<<<<<< HEAD
 tfs = FS [("f1", File "Ola"),
           ("f2", File "Repetido"),
           ("d1", Dir (FS [("f2", File "Ole"),
@@ -1521,6 +1633,8 @@ tfs2 = FS [("d9",Dir (FS [("f2", File "Ole"),
                           ("f9", File "Ole")
                          ]))
           ]
+=======
+>>>>>>> c2da39d43008876a9215c0c1f2b1794fa59709d3
 
 check :: (Eq a) => FS a b -> Bool
 check (FS [])                     = True
