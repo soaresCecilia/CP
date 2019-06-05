@@ -1291,9 +1291,11 @@ para uma stack. Na verdade, a stack calcula o valor da string, devolvendo a list
 de todas as operações que são feitas e a quais algaritmos por uma ordem posfixa.
 Para podermos definir esta função como um catamorfismo de |Expr| tivemos de transformar
 a |String| que nos foi passada como parâmetro para a função |compile| numa
-|Expr|. Para isso, socorremo-nos da função |readExp| fornecida no Anexo C para
-de forma a obtermos uma |Expr| a partir de uma String dada.
-Ademais, criamos uma função auliar de nome |calculation| em que transformamos
+|Expr|. Essa alteração de tipos só foi conseguida graças à função |readExp|
+fornecida no Anexo C. Com efeito, para obtermos uma |Expr| a partir de uma String dada
+aplicamos à nossa |String| a função |readExp| e ao retorno desta última aplicamos
+o referido catamorfismo de |Expr| que adiante explicitaremos.
+Ademais, criamos uma função auxiliar que denominamos de |calculation|, a qual transforma
 todas as possíveis operações aritméticas em listas de |Strings|, conforme podemos
 verificar infra.
 
@@ -1306,9 +1308,10 @@ calculation "/" = ["DIV"]
 
 \end{code}
 
-Finalmente, passamos a construir a nossa função compile enquanto um catamorfismo de |Expr|,
-em que o mesmo é aplicado à função |g|, definida como |either inteiro op| após a referida transformação
-de tipos. Por um lado, |inteiro| ``faz um push de um número'',
+Finalmente, passamos a construir a nossa função compile enquanto um catamorfismo de |Expr|.
+Na verdade, o referido catamorfismo recebe como parâmetro a função |g|,
+cuja definição é um |either inteiro op|.
+Por um lado, |inteiro| ``faz um push de um número'',
 por exemplo,|["PUSH 4"]|, para stack, por outro lado, o |op| ``empurra'' para a
 stack a operação aritmética correspondente.
 Face ao exposto, a nossa função compile definida como um catamorfismo de |Expr|
@@ -1326,22 +1329,17 @@ compile = cataExpr (either inteiro op) . strings
 
 \item Função |show'|
 
-Esta função gera a representação textual de uma |Expr| sem a definição dos seus tipos,
-sendo o seu retorno uma |String|. Para definir esta função definimo-la
-como um catamorfismo, em que a função gene é definida como um `either'',
-|g = either show expressao|, ou seja, caso a |Expr| seja um |Num|, aplicamos
-somente a função |show|, caso seja um |Bop| transformamo-la numa expressão aritmética,
-conforme se demonstra de seguida.
-Desta feita, a nossa função |show'| fica assim definida:
-
-\begin{code}
-show' :: Expr -> String
-show' = cataExpr (either show expressao)
-      where expressao (Op op, (a,b)) = "(" ++ a ++ " " ++ op ++ " " ++ b ++ ")"
-
-\end{code}
-
-Face ao exposto, o diagrama do catamorfismo acima indicado é representado por:
+Esta função gera a representação textual de uma |Expr|,
+sendo o seu retorno uma |String| que representa uma expressão aritmética.
+Para definir a nossa função |show'| utilizamos um catamorfismo,
+cujo gene é definido como um `either'', em particular,
+|g = either show expressao|.
+O catamorfismo da função |cataExpr| é definido como uma sucessão de
+funções, no caso, é aplicada a função |g| após a aplicação do |Functor| das |Expr|
+ao retorno da função |outExpr|. Assim, apesar da função |show'| receber como
+parâmetro uma |Expr|, quando a função |cataExpr| é aplicada, o seus tipos de
+entrada são |(Int + (Op >< (Int >< Int)))|. Esta descrição é melhor compreendida
+através da visualização do diagrama do referido catamorfismo que de seguida se apresenta.
 
 \begin{eqnarray*}
 \xymatrix@@C=2cm{
@@ -1352,12 +1350,26 @@ Face ao exposto, o diagrama do catamorfismo acima indicado é representado por:
            \ar[d]^{|recExpr (show')|}
            \ar[l]_-{|inExpr|}
 \\
-     |Int|
+     |String|
 &
      |Int + (Op >< (Int >< Int)|
            \ar[l]^-{|either show expressao|}
 }
 \end{eqnarray*}
+
+
+Assim, caso a entrada para a nossa função gene do catamorfismo,|g|, seja um número inteiro aplicamos
+a função |show|, já definida nas bibliotecas do Haskell, na hipótese de
+ser do tipo |(Op >< (Int >< Int)| geramos uma expressão aritmética, ficando
+|(Int Op Int)|.
+Desta feita, a nossa função |show'| fica assim definida:
+
+\begin{code}
+show' :: Expr -> String
+show' = cataExpr (either show expressao)
+      where expressao (Op op, (a,b)) = "(" ++ a ++ " " ++ op ++ " " ++ b ++ ")"
+
+\end{code}
 
 \end{enumerate}
 
@@ -1366,6 +1378,39 @@ Face ao exposto, o diagrama do catamorfismo acima indicado é representado por:
 Para a resolução do nosso problema 2 como cata/ana/hilo-morfismos aprendidos na
 disciplina de Cálculo de Programas, definimos as funções |inL2D|, |outL2D|, |recL2D|,
 |cataL2D|, |anaL2D| e |hyloL2D|.
+De facto, são as corretas composições destas funções que permitem resolver
+este problema como um cata, ana ou hilomorfismo.
+Com efeito, o diagrama genérico destes três sistemas de composição de funções é:
+
+\begin{eqnarray*}
+\xymatrix@@C=3cm{
+   |L2D|
+          \ar[d]_-{|anaL2D g|}
+           \ar[r]^-{|g|}
+&
+   |Unid + b >< (L2D >< L2D)|
+          \ar[d]^{|recL2D(anaL2D g)|}
+\\
+    |LD2|
+       \ar[d]_-{|cataL2D h|}
+       \ar[r]^-{|outL2D|}
+&
+    |Unid + b >< (L2D >< L2D)|
+          \ar[l]^-{|inL2D|}
+           \ar[d]^{|recL2D(cataL2D h)|}
+\\
+   |L2D|
+&
+   |Unid + b >< (L2D >< L2D)|
+       \ar[l]^-{|h|}
+}
+\end{eqnarray*}
+
+Contudo, por falta de tempo não conseguimos responder inteiramente a esta questão,
+tendo apenas conseguido gerar o seguinte programa em linguagem Haskell sem nos socorrermos
+de nenhum cata/ana ou hilomorfismo.
+
+Todavia, isso não nos impediu de demonstrar que sabemos deduzir as seguintes funções:
 
 \begin{code}
 inL2D :: Either a (b, (X a b,X a b)) -> X a b
@@ -1382,7 +1427,8 @@ cataL2D g = g . (recL2D (cataL2D g)) . outL2D
 
 anaL2D g = inL2D . (recL2D (anaL2D g)) . g
 
--- o a será uma lista de caixas
+hyloL2D h g = cataL2D h . anaL2D g
+
 collectLeafs :: X a b -> [a]
 collectLeafs (Unid a) = [a]
 collectLeafs (Comp b x1 x2) = collectLeafs x1 ++ collectLeafs x2
@@ -1422,6 +1468,8 @@ ex3 = Comp Hb (Comp Ve bot top) (Comp Ve gbox2 ybox2)
 -- é o ponto final do LD2, i e, o ponto onde começa a ultima caixa
 --
 
+
+
 v :: Int -> Int -> Int
 v l1 l2 | l1 >= l2 = l1
         | otherwise = l1 + (l2 `div` 2)
@@ -1437,9 +1485,6 @@ calcAux H (l1, a1) (l2,a2) = (l1 + l2, v a1 a2)
 dimen :: X Caixa Tipo -> (Int, Int)
 dimen (Unid ((largura, altura), _)) = (largura,altura)
 dimen (Comp tipo esq dir) = calcAux tipo (dimen esq) (dimen dir)
-
-cai_ex2 :: ((X Caixa Tipo), Origem)
-cai_ex2 = (myex2,(0,0))
 
 pprint :: X (Caixa, Origem) () -> String
 pprint (Unid (((_,(x,_))), origem)) = "// Caixa: " ++ x ++ " " ++ show origem ++ " | - | "
@@ -1508,33 +1553,6 @@ ajudante ((o,((w,h),(t,c))):xs)
 
 \end{code}
 
-De facto, são as corretas composições destas funções que permitem resolver
-este problema como um cata, ana ou hilomorfismo.
-Com efeito, o diagrama genérico destes três sistemas de composição de funções é:
-
-\begin{eqnarray*}
-\xymatrix@@C=3cm{
-   |L2D|
-          \ar[d]_-{|anaL2D g|}
-           \ar[r]^-{|g|}
-&
-   |Unid + b >< (L2D >< L2D)|
-          \ar[d]^{|recL2D(anaL2D g)|}
-\\
-    |LD2|
-       \ar[d]_-{|cataL2D h|}
-       \ar[r]^-{|outL2D|}
-&
-    |Unid + b >< (L2D >< L2D)|
-          \ar[l]^-{|inL2D|}
-           \ar[d]^{|recL2D(cataL2D h)|}
-\\
-   |L2D|
-&
-   |Unid + b >< (L2D >< L2D)|
-       \ar[l]^-{|h|}
-}
-\end{eqnarray*}
 
 
 \subsection*{Problema 3}
@@ -1553,6 +1571,90 @@ cos' x = prj . for loop init where \par
  init = (1, -1/2 * $ x^{2}$, 12, 18) \par
  prj(e, h, s, t) = e
 
+\vspace{0.2cm}
+A forma como encontramos estas funções foi calculando, a partir da função |cos x n| derivamos
+as quatro funções que se seguem.
+
+\begin{eqnarray*}
+	e\ x 0 = \sum_{n=0}^{0} \frac{(-1)^0}{(2*0)!} x^{2*0}
+\end{eqnarray*}
+
+
+\begin{eqnarray*}
+	e\ x (n+1)= \sum_{n=0}^\infty \frac{(-1)^n}{(2n)!} x^{2n} + \frac{(-1)^{(n+1)}}{(2(n+1))!} * x^{2(n+1)}
+\end{eqnarray*}
+
+Se definirmos h x n como
+
+\begin{eqnarray*}
+h x n =  x^{2(n+1)} * \frac{(-1)^{(n+1)}}{(2(n+1))!}
+\end{eqnarray*}
+
+temos |e x| e |h x| em recursividade mútua,
+
+\begin{eqnarray*}
+  h\ x 0 = \frac{-1}{2} * x^{2}
+\end{eqnarray*}
+
+\begin{eqnarray*}
+  h\ x (n+1) = h x n * \frac{(-1)*x^{2}}{((2n+3) * (2n+4)}
+\end{eqnarray*}
+
+Aplicando o mesmo raciocínio e definindo |s n| como
+
+\begin{eqnarray*}
+  s\ n = (2n+3) * (2n+4)
+\end{eqnarray*}
+
+temos três funções em recursividade mútua, sendo que
+
+\begin{eqnarray*}
+\start
+  |s 0 = 12|
+\more
+  |s (n+1) = s n + 8n + 18|
+\end{eqnarray*}
+
+Finalmente, se fixarmos que
+
+\begin{eqnarray*}
+  t\ n = 8n + 18
+\end{eqnarray*}
+
+então,
+
+\begin{eqnarray*}
+\start
+  t\ 0 = 18
+\more
+  t\ (n+1) = t n + 18
+\end{eqnarray*}
+
+
+Daqui resulta que obtemos as seguintes quatro funções recursivas:
+\begin{spec}
+e 0 = 1
+e(n+1) =  + h n
+\end{spec}
+
+\begin{spec}
+h 0 = -1/2 * (x * x)
+h (n+1) =  + s n
+\end{spec}
+
+\begin{spec}
+s 0 = 12
+s (n+1) = s n + 8n + 18
+\end{spec}
+
+\begin{spec}
+t 0 = 18
+t(n+1) = t n + 8
+\end{spec}
+
+
+cuja definição, em linguagem Haskell, será implementada como:
+
 \begin{code}
 cos' x = prj . for loop init where
  loop (e, h, s, t) = (e + h, h * ((-1) *  x^2) /s, s + t, t + 8)
@@ -1565,6 +1667,16 @@ cos' x = prj . for loop init where
 
 \subsection*{Problema 4}
 Triologia ``ana-cata-hilo":
+
+O último problema prende-se com o desenvolvimento de uma biblioteca de funções
+que manipula ficheiros. Esta
+
+\begin{enumerate}
+
+\item Definição das funções |outFS|, |baseFS|, |cataFS|, |anaFS| e |hyloFS|
+
+Para definirmos estas funções começamos por analisar o tipo de dados |FS a b|
+e |Node a b|, sendo que cada um dos tipos de dados depende do outro, pelo
 
 \begin{code}
 
@@ -1588,10 +1700,14 @@ anaFS g = inFS . (baseFS id id (anaFS g)) . g
 
 
 
+\item |Diagrama de cataFS|
+
+O diagrama do cataFS é representado infra. De acordo com o referido diagrama
+o tipo de dados |FS| quando serve de entrada à função
 
 \begin{eqnarray*}
 \xymatrix@@C=2cm{
-    |FS|
+    |FS a b|
            \ar[d]_-{|cataFS g|}
 &
     |[(A >< (B + FS a b))]|
@@ -1600,7 +1716,7 @@ anaFS g = inFS . (baseFS id id (anaFS g)) . g
 \\
      |C|
 &
-     |[(A >< (B + Bool))]|
+     |[(A >< (B + C))]|
            \ar[l]^-{|g|}
 }
 \end{eqnarray*}
@@ -1608,8 +1724,9 @@ anaFS g = inFS . (baseFS id id (anaFS g)) . g
 
 
 Outras funções pedidas:
+A nossa função check não foi definida como um catamorfismo. Esta função vai
+verifica se em cada diretoria existe identificadores de ficheiros repetidos.
 \begin{code}
-
 check :: (Eq a) => FS a b -> Bool
 check (FS [])                     = True
 check (FS ((x, File y):t))        = checkFiles (FS ((x, File y):t)) &&
@@ -1617,14 +1734,32 @@ check (FS ((x, File y):t))        = checkFiles (FS ((x, File y):t)) &&
 check (FS ((x, Dir diretoria):t)) = checkFiles (FS ((x, Dir diretoria):t)) &&
                                     checkFiles diretoria &&
                                     check (FS t)
+\end{code}
 
+Recolhe o conteúdo de todos os ficheiros num arquivo indexado pelo |path|.
+
+
+Definimos a função |tar| como um catamorfismo que recebe de entrada um |FS|
+e devolve
+
+
+\begin{code}
+tar :: FS a b -> [(Path a, b)]
+tar = cataFS( concat.map((either (singl.(singl >< id)) (auxTar)).distr))
 
 auxTar :: (a,[([a],b)]) -> [([a],b)]
 auxTar (a, []) = []
 auxTar (a, (l,b):xs) = (a:l,b):(auxTar (a,xs))
 
-tar :: FS a b -> [(Path a, b)]
-tar = cataFS( concat.map((either (singl.(singl >< id) ) (auxTar) ).distr))
+\end{code}
+
+A função novoFich pega numa lista de identificadores do ficheiro e diretorias e
+e coloca o ficheiro
+
+
+\begin{code}
+untar :: (Eq a) => [(Path a, b)] -> FS a b
+untar = joinDupDirs . cataList(either (auxUntar) novoFich)
 
 novoFich :: (([a],b), FS a b) -> FS a b
 novoFich (([x],b), FS l)   = FS ((x,File b):l)
@@ -1632,11 +1767,10 @@ novoFich (((h:t),b), FS l) = FS (singl(h, Dir (novoFich ((t,b), FS l))))
 
 auxUntar :: () -> FS a b
 auxUntar () = FS []
-
-untar :: (Eq a) => [(Path a, b)] -> FS a b
-untar = joinDupDirs . cataList(either (auxUntar) novoFich)
+\end{code}
 
 
+\begin{code}
 find :: (Eq a) => a -> FS a b -> [Path a]
 find a = cataFS ( concat.map ( ( either (auxFind1 a) (auxFind2 a) ).distr ) )
 
@@ -1648,7 +1782,10 @@ auxFind2 :: (Eq a) => a -> (a,[[a]]) -> [[a]]
 auxFind2 file (x,(h:t)) | (elem file h) = (x:h):auxFind2 file (x,t)
                         | otherwise = auxFind2 file (x,t)
 auxFind2 file _ = []
+\end{code}
 
+
+\begin{code}
 new :: (Eq a) => Path a -> b -> FS a b -> FS a b
 new = undefined
 
