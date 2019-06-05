@@ -1400,7 +1400,7 @@ cai_ex2 = (myex2,(0,0))
 pprint :: X (Caixa, Origem) () -> String
 pprint (Unid (((_,(x,_))), origem)) = "// Caixa: " ++ x ++ " " ++ show origem ++ " | - | "
 pprint (Comp tipo esq dir) = pprint esq ++ pprint dir
-{--
+{-
 calcOrigins' :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
 calcOrigins' (Unid caixa, origem) = Unid (caixa, origem)
 calcOrigins' ((Comp tipo esq dir), origem) = (Comp () esq' dir')
@@ -1408,7 +1408,8 @@ calcOrigins' ((Comp tipo esq dir), origem) = (Comp () esq' dir')
                           esq' = calcOrigins' (esq, (fromIntegral a1, fromIntegral b1 ) )
                           dir' = calcOrigins' (dir, (fromIntegral a2, fromIntegral b2 ) )
                           (a1,b1) = dimen esq
-                          (a2,b2) = dimen dir--}
+                          (a2,b2) = dimen dir
+-}
 calcOrigins' :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
 calcOrigins' (Unid caixa, origem) = Unid (caixa, origem)
 calcOrigins' ((Comp tipo esq (Unid ((largura, altura), x))), origem) = (Comp () esq' dir')
@@ -1450,12 +1451,17 @@ agrup_caixas :: X (Caixa, Origem) () -> Fig
 agrup_caixas = undefined
 
 
+fl :: (Float,Float)
+fl = (1.0,1.0)
 
+sfl :: Float
+sfl = 1.0
 
 --segundo problema
 
---mostra_caixas :: (L2D,Origem) -> IO ()--
-mostra_caixas = undefined
+mostra_caixas :: (L2D,Origem) -> IO ()
+mostra_caixas (x, y) =
+       do return ()
 
 --auxiliar da função mostra_caixas
 caixasAndOrigin2Pict :: (X Caixa Tipo, Origem) -> G.Picture
@@ -1501,17 +1507,59 @@ hyloFS g h = (cataFS g) . (anaFS h)
 \end{code}
 Outras funções pedidas:
 \begin{code}
+tfs = FS [("f1", File "Ola"),
+          ("f2", File "Repetido"),
+          ("d1", Dir (FS [("f2", File "Ole"),
+                          ("f3", File "Ole")
+                         ]))
+         ]
+tfs2 = FS [("d9",Dir (FS [("f2", File "Ole"),
+                          ("f1", File "Ole"),
+                          ("f3", File "Ole"),
+                          ("f4", File "Ole"),
+                          ("f5", File "Ole"),
+                          ("f9", File "Ole")
+                         ]))
+          ]
+
 check :: (Eq a) => FS a b -> Bool
-check = undefined
+check (FS [])                     = True
+check (FS ((x, File y):t))        = checkFiles (FS ((x, File y):t)) &&
+                                    check (FS t)
+check (FS ((x, Dir diretoria):t)) = checkFiles (FS ((x, Dir diretoria):t)) &&
+                                    checkFiles diretoria &&
+                                    check (FS t)
+
+
+auxTar :: (a,[([a],b)]) -> [([a],b)]
+auxTar (a, []) = []
+auxTar (a, (l,b):xs) = (a:l,b):(auxTar (a,xs))
 
 tar :: FS a b -> [(Path a, b)]
-tar = undefined
+tar = cataFS( concat.map((either (singl.(singl >< id) ) (auxTar) ).distr))
+
+novoFich :: (([a],b), FS a b) -> FS a b
+novoFich (([x],b), FS l)   = FS ((x,File b):l)
+novoFich (((h:t),b), FS l) = FS (singl(h, Dir (novoFich ((t,b), FS l))))
+
+auxUntar :: () -> FS a b
+auxUntar () = FS []
 
 untar :: (Eq a) => [(Path a, b)] -> FS a b
-untar = undefined
+untar = joinDupDirs . cataList(either (auxUntar) novoFich)
+
 
 find :: (Eq a) => a -> FS a b -> [Path a]
-find = undefined
+find a = cataFS ( concat.map ( ( either (auxFind1 a) (auxFind2 a) ).distr ) )
+
+auxFind1 :: (Eq a) => a -> (a,b) -> [[a]]
+auxFind1 x (a,b) | x == a = singl (singl a)
+                 | otherwise = nil (nil)
+
+auxFind2 :: (Eq a) => a -> (a,[[a]]) -> [[a]]
+auxFind2 file (x,(h:t)) | (elem file h) = (x:h):auxFind2 file (x,t)
+                        | otherwise = auxFind2 file (x,t)
+auxFind2 file _ = []
 
 new :: (Eq a) => Path a -> b -> FS a b -> FS a b
 new = undefined
