@@ -113,13 +113,13 @@
 
 \begin{center}\large
 \begin{tabular}{ll}
-\textbf{Grupo} nr. & 99 (preencher)
+\textbf{Grupo} nr. & 13
 \\\hline
-a11111 & Nome1 (preencher)
+a34900 & Cecília Soares
 \\
-a22222 & Nome2 (preencher)
+a89983 & Paulo Lima
 \\
-a33333 & Nome3 (preencher)
+a & Paulo Pereira
 \end{tabular}
 \end{center}
 
@@ -1162,6 +1162,7 @@ de Programas, bem como de alguns diagramas específicos.
 Uma vez que uma Expr é um |Num Int| ou |Bop Expr Op Expr|
 sabemos que o |inExpr| e o |outExpr| deverão "construir" ou "desconstruir"
 a Expr, respetivamente, logo, conseguimos representar os diagramas:
+
 \begin{eqnarray*}
 \xymatrix@@C=2cm{
      |Expr|
@@ -1466,8 +1467,6 @@ ex3 = Comp Hb (Comp Ve bot top) (Comp Ve gbox2 ybox2)
             bot = Comp Hb wbox1 bbox2
             top = (Comp Ve (Comp Hb bbox1 gbox1) (Comp Hb rbox1 (Comp H ybox1 rbox2)))
 
--- é o ponto final do LD2, i e, o ponto onde começa a ultima caixa
---
 
 \end{code}
 
@@ -1506,15 +1505,6 @@ calcOrigins ((Comp tipo esq dir), origem) = (Comp () esq' dir')
                           esq' = calcOrigins (esq, origem)
                           dir' = calcOrigins (dir, calc tipo origem (0,0))
 
---O princípio base é que a origem de um rectangulo corresponde ao seu canto inferior
--- esquerdo: a partir disto, dados dois rectangulos (a,b)
--- Quanto à função calc: considere duas caixas a) e b). Sabendo a posição absoluta
---da caixa a), as suas dimensões, e a posição relativa da caixa b) em relação
---à caixa a), a função, calc :: Tipo -> Origem -> (Float, Float) -> Origem,
---determina onde colocar a caixa b), i.e. a sua posição absoluta.
-
---(Float, Float) deveria ser (Int, Int)
-
 calc :: Tipo -> Origem -> (Float, Float) -> Origem
 calc Hb (x,y) (largura, altura) = (x + largura, y)
 calc Ht (x,y) (largura, altura) = (x + largura, y + altura)
@@ -1524,7 +1514,6 @@ calc Ve (x,y) (largura, altura) = (x, y + altura)
 calc V (x,y) (largura, altura) = (x + (largura / 2), y + altura)
 
 
--- agrupa as caixas numa lista com as origens e caixas
 agrup_caixas :: X (Caixa, Origem) () -> Fig
 agrup_caixas (Unid (caixa, origem)) = [(origem,caixa)]
 agrup_caixas (Comp () esq dir) = agrup_caixas esq ++ agrup_caixas dir
@@ -1535,23 +1524,38 @@ fl = (1.0,1.0)
 sfl :: Float
 sfl = 1.0
 
---segundo problema
--- Função display é dada pelo professor
--- a Funcao caixasAndOrigin2Pict e após isso usa o diplay para apresentar a imagem
--- em formato gráfico
+\end{code}
+
+Segundo problema
+
+Função display é dada pelo professor
+a Funcao caixasAndOrigin2Pict e após isso usa o diplay para apresentar a imagem
+em formato gráfico
+\begin{code}
+
 mostra_caixas :: (L2D,Origem) -> IO ()
 mostra_caixas = display . caixasAndOrigin2Pict
 
--- auxiliar da função mostra_caixas
--- Calcula inicialmente as orignes de cada uma das imagens usando a funcao calcOrigins
--- De seguida agrupa todas as caixas numa lista de caixas e as suas origens "Fig"
--- Depois chama-se a função ajudante que coloca todas as caixas e origens numa lista de pictures
--- usando a Sugestão de utilizar a G.pictures, transforma-se depois a lista retornada pela "ajudante"[Pictures] numa Picture
+\end{code}
+
+auxiliar da função mostra_caixas
+Calcula inicialmente as orignes de cada uma das imagens usando a funcao calcOrigins
+De seguida agrupa todas as caixas numa lista de caixas e as suas origens "Fig"
+Depois chama-se a função ajudante que coloca todas as caixas e origens numa lista de pictures
+usando a Sugestão de utilizar a G.pictures, transforma-se depois a lista retornada pela "ajudante"[Pictures] numa Picture
+
+\begin{code}
+
 caixasAndOrigin2Pict :: (X Caixa Tipo, Origem) -> G.Picture
 caixasAndOrigin2Pict = G.Pictures . ajudante . agrup_caixas . calcOrigins
 
--- Funcao que recebe uma lista de caixas com origens
--- Para cada elemento da lista (Caixa,Origem), usamos a funcao dada "crC"
+\end{code}
+
+Funcao que recebe uma lista de caixas com origens
+Para cada elemento da lista (Caixa,Origem), usamos a funcao dada "crCaixa"
+
+\begin{code}
+
 ajudante [] = []
 ajudante ((o,((w,h),(t,c))):xs)
     = crCaixa o (fromIntegral w) (fromIntegral h) t c : ajudante xs
@@ -1681,7 +1685,32 @@ que manipula ficheiros. Esta
 \item Definição das funções |outFS|, |baseFS|, |cataFS|, |anaFS| e |hyloFS|
 
 Para definirmos estas funções começamos por analisar o tipo de dados |FS a b|
-e |Node a b|, sendo que cada um dos tipos de dados depende do outro, pelo
+e |Node a b|, sendo que cada um dos tipos de dados depende do outro.
+A função |outFS| transforma |FS| em |[(a,(b + FS a b))]| e a função |outNode|
+devolve o conteúdo de um ficheiro ou uma diretoria.
+Os respetivos diagramas destas funções são:
+
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |FS|
+           \ar[r]_-{|outFS|}
+&
+     |[a >< (b + FS)]|
+}
+\end{eqnarray*}
+
+
+
+\begin{eqnarray*}
+\xymatrix@@C=2cm{
+     |Node a b|
+           \ar[r]_-{|outNode|}
+&
+     |A + FS a b|
+}
+\end{eqnarray*}
+
+
 
 \begin{code}
 
@@ -1741,24 +1770,17 @@ check (FS ((x, Dir diretoria):t)) = checkFiles (FS ((x, Dir diretoria):t)) &&
                                     check (FS t)
 \end{code}
 
-Recolhe o conteúdo de todos os ficheiros num arquivo indexado pelo |path|.
-
-
-Definimos a função |tar| como um catamorfismo que recebe de entrada um |FS|
-e devolve
-
-
 \begin{code}
 tar :: FS a b -> [(Path a, b)]
-tar = cataFS( concat.map((either (singl.(singl >< id)) (auxTar)).distr))
-
-auxTar :: (a,[([a],b)]) -> [([a],b)]
-auxTar (a, []) = []
-auxTar (a, (l,b):xs) = (a:l,b):(auxTar (a,xs))
+tar = undefined
 \end{code}
 
 A função novoFich pega numa lista de identificadores do ficheiro e diretorias e
-e coloca o ficheiro
+e coloca o ficheiro dentro da mesma.
+A função auxUntar devolve o caso nil, como tal apenas devolve o caso vazio.
+Através do catamorfismo de listas a função untar cria uma |FS a b| e usando joinDupDirs
+para juntar directorias que estejam na mesma pasta e que possuam o mesmo identificador.
+
 \begin{code}
 untar :: (Eq a) => [(Path a, b)] -> FS a b
 untar = joinDupDirs . cataList(either (auxUntar) novoFich)
@@ -1769,29 +1791,10 @@ novoFich (((h:t),b), FS l) = FS (singl(h, Dir (novoFich ((t,b), FS l))))
 
 auxUntar :: () -> FS a b
 auxUntar () = FS []
-\end{code}
 
-
-A auxfind1 verifica se o a, que é um nome de ficheiro ou diretoria está no par (a,b),
-caso esteja cria uma lista de lista do a,caso contrário cria uma lista de lista vazia
-
-
-\begin{code}
 find :: (Eq a) => a -> FS a b -> [Path a]
-find a = cataFS ( concat.map ( ( either (auxFind1 a) (auxFind2 a) ).distr ) )
+find a = undefined
 
-auxFind1 :: (Eq a) => a -> (a,b) -> [[a]]
-auxFind1 x (a,b) | x == a = singl (singl a)
-                 | otherwise = nil (nil)
-
-auxFind2 :: (Eq a) => a -> (a,[[a]]) -> [[a]]
-auxFind2 file (x,(h:t)) | (elem file h) = (x:h): auxFind2 file (x,t)
-                        | otherwise = auxFind2 file (x,t)
-auxFind2 file _ = []
-\end{code}
-
-
-\begin{code}
 new :: (Eq a) => Path a -> b -> FS a b -> FS a b
 new = undefined
 
