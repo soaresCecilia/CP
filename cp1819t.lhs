@@ -1534,9 +1534,10 @@ sfl = 1.0
 
 Segundo problema
 
-Função display é dada pelo professor
-a Funcao caixasAndOrigin2Pict e após isso usa o diplay para apresentar a imagem
-em formato gráfico
+A função display dada pelo professor e caixasAndOrigin2Pict criada para auxiliar
+a função mostra_caixas conjugam de forma a que seja representado de forma gráfica
+o resultado das transformações feitas com as respetivas caixas nas suas origens
+
 \begin{code}
 
 mostra_caixas :: (L2D,Origem) -> IO ()
@@ -1544,7 +1545,7 @@ mostra_caixas = display . caixasAndOrigin2Pict
 
 \end{code}
 
-auxiliar da função mostra_caixas
+caixasAndOrigin2Pict é a função auxiliar da função mostra_caixas
 Calcula inicialmente as orignes de cada uma das imagens usando a funcao calcOrigins
 De seguida agrupa todas as caixas numa lista de caixas e as suas origens "Fig"
 Depois chama-se a função ajudante que coloca todas as caixas e origens numa lista de pictures
@@ -1557,8 +1558,9 @@ caixasAndOrigin2Pict = G.Pictures . ajudante . agrup_caixas . calcOrigins
 
 \end{code}
 
-Funcao que recebe uma lista de caixas com origens
+A funcao ajudante recebe uma lista de caixas com origens
 Para cada elemento da lista (Caixa,Origem), usamos a funcao dada "crCaixa"
+que transforma cada elemento da lista numa Picture
 
 \begin{code}
 
