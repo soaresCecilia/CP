@@ -1291,9 +1291,11 @@ para uma stack. Na verdade, a stack calcula o valor da string, devolvendo a list
 de todas as operações que são feitas e a quais algaritmos por uma ordem posfixa.
 Para podermos definir esta função como um catamorfismo de |Expr| tivemos de transformar
 a |String| que nos foi passada como parâmetro para a função |compile| numa
-|Expr|. Para isso, socorremo-nos da função |readExp| fornecida no Anexo C para
-de forma a obtermos uma |Expr| a partir de uma String dada.
-Ademais, criamos uma função auliar de nome |calculation| em que transformamos
+|Expr|. Essa alteração de tipos só foi conseguida graças à função |readExp|
+fornecida no Anexo C. Com efeito, para obtermos uma |Expr| a partir de uma String dada
+aplicamos à nossa |String| a função |readExp| e ao retorno desta última aplicamos
+o referido catamorfismo de |Expr| que adiante explicitaremos.
+Ademais, criamos uma função auxiliar que denominamos de |calculation|, a qual transforma
 todas as possíveis operações aritméticas em listas de |Strings|, conforme podemos
 verificar infra.
 
@@ -1306,9 +1308,10 @@ calculation "/" = ["DIV"]
 
 \end{code}
 
-Finalmente, passamos a construir a nossa função compile enquanto um catamorfismo de |Expr|,
-em que o mesmo é aplicado à função |g|, definida como |either inteiro op| após a referida transformação
-de tipos. Por um lado, |inteiro| ``faz um push de um número'',
+Finalmente, passamos a construir a nossa função compile enquanto um catamorfismo de |Expr|.
+Na verdade, o referido catamorfismo recebe como parâmetro a função |g|,
+cuja definição é um |either inteiro op|.
+Por um lado, |inteiro| ``faz um push de um número'',
 por exemplo,|["PUSH 4"]|, para stack, por outro lado, o |op| ``empurra'' para a
 stack a operação aritmética correspondente.
 Face ao exposto, a nossa função compile definida como um catamorfismo de |Expr|
@@ -1326,22 +1329,17 @@ compile = cataExpr (either inteiro op) . strings
 
 \item Função |show'|
 
-Esta função gera a representação textual de uma |Expr| sem a definição dos seus tipos,
-sendo o seu retorno uma |String|. Para definir esta função definimo-la
-como um catamorfismo, em que a função gene é definida como um `either'',
-|g = either show expressao|, ou seja, caso a |Expr| seja um |Num|, aplicamos
-somente a função |show|, caso seja um |Bop| transformamo-la numa expressão aritmética,
-conforme se demonstra de seguida.
-Desta feita, a nossa função |show'| fica assim definida:
-
-\begin{code}
-show' :: Expr -> String
-show' = cataExpr (either show expressao)
-      where expressao (Op op, (a,b)) = "(" ++ a ++ " " ++ op ++ " " ++ b ++ ")"
-
-\end{code}
-
-Face ao exposto, o diagrama do catamorfismo acima indicado é representado por:
+Esta função gera a representação textual de uma |Expr|,
+sendo o seu retorno uma |String| que representa uma expressão aritmética.
+Para definir a nossa função |show'| utilizamos um catamorfismo,
+cujo gene é definido como um `either'', em particular,
+|g = either show expressao|.
+O catamorfismo da função |cataExpr| é definido como uma sucessão de
+funções, no caso, é aplicada a função |g| após a aplicação do |Functor| das |Expr|
+ao retorno da função |outExpr|. Assim, apesar da função |show'| receber como
+parâmetro uma |Expr|, quando a função |cataExpr| é aplicada, o seus tipos de
+entrada são |(Int + (Op >< (Int >< Int)))|. Esta descrição é melhor compreendida
+através da visualização do diagrama do referido catamorfismo que de seguida se apresenta.
 
 \begin{eqnarray*}
 \xymatrix@@C=2cm{
@@ -1352,12 +1350,26 @@ Face ao exposto, o diagrama do catamorfismo acima indicado é representado por:
            \ar[d]^{|recExpr (show')|}
            \ar[l]_-{|inExpr|}
 \\
-     |Int|
+     |String|
 &
      |Int + (Op >< (Int >< Int)|
            \ar[l]^-{|either show expressao|}
 }
 \end{eqnarray*}
+
+
+Assim, caso a entrada para a nossa função gene do catamorfismo,|g|, seja um número inteiro aplicamos
+a função |show|, já definida nas bibliotecas do Haskell, na hipótese de
+ser do tipo |(Op >< (Int >< Int)| geramos uma expressão aritmética, ficando
+|(Int Op Int)|.
+Desta feita, a nossa função |show'| fica assim definida:
+
+\begin{code}
+show' :: Expr -> String
+show' = cataExpr (either show expressao)
+      where expressao (Op op, (a,b)) = "(" ++ a ++ " " ++ op ++ " " ++ b ++ ")"
+
+\end{code}
 
 \end{enumerate}
 
@@ -1404,9 +1416,6 @@ dimen :: X Caixa Tipo -> (Int, Int)
 dimen (Unid ((largura, altura), _)) = (largura,altura)
 dimen (Comp tipo esq dir) = calcAux tipo (dimen esq) (dimen dir)
 
-cai_ex2 :: ((X Caixa Tipo), Origem)
-cai_ex2 = (myex2,(0,0))
-
 pprint :: X (Caixa, Origem) () -> String
 pprint (Unid (((_,(x,_))), origem)) = "// Caixa: " ++ x ++ " " ++ show origem ++ " | - | "
 pprint (Comp tipo esq dir) = pprint esq ++ pprint dir
@@ -1416,12 +1425,12 @@ calcOrigins :: ((X Caixa Tipo), Origem) -> X (Caixa, Origem) ()
 calcOrigins (Unid caixa, origem) = Unid (caixa, origem)
 calcOrigins ((Comp tipo esq (Unid ((largura, altura), x))), origem) = (Comp () esq' dir')
                       where
-                          esq' = calcOrigins' (esq, origem)
-                          dir' = calcOrigins' ((Unid ((largura, altura), x)), calc tipo origem (fromIntegral largura, fromIntegral altura))
+                          esq' = calcOrigins (esq, origem)
+                          dir' = calcOrigins ((Unid ((largura, altura), x)), calc tipo origem (fromIntegral largura, fromIntegral altura))
 calcOrigins ((Comp tipo esq dir), origem) = (Comp () esq' dir')
                       where
-                          esq' = calcOrigins' (esq, origem)
-                          dir' = calcOrigins' (dir, calc tipo origem (0,0))
+                          esq' = calcOrigins (esq, origem)
+                          dir' = calcOrigins (dir, calc tipo origem (0,0))
 
 
 calc :: Tipo -> Origem -> (Float, Float) -> Origem
@@ -1578,13 +1587,14 @@ t(n+1) = t n + 8
 \end{spec}
 
 
-Utilizamos esta versão da função |cos' x| para efeitos de compilação.
-\begin{spec}
+cuja definição, em linguagem Haskell, será implementada como:
+
+\begin{code}
 cos' x = prj . for loop init where
  loop (e, h, s, t) = (e + h, h * ((-1) *  (x * x)) /s, s + t, t + 8)
  init = (1, (-1/2 * (x*x)), 12, 18)
  prj(e, h, s, t) = e
-\end{spec}
+\end{code}
 
 
 
